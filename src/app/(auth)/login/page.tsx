@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   const handleLoginError = (errorMsg: string) => {
     // Optionally handle error on this page
-    console.error("Login error on page:", errorMsg);
+    console.error('Login error on page:', errorMsg);
   };
 
   const handleClose = () => {

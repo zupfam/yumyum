@@ -1,7 +1,27 @@
+export type DataStoreType = 'supabase' | 'gsheets';
+
+export interface VendorMapping {
+  id: number;
+  vendor_slug: string;
+  auth_user_id?: string;
+  datastore_type: DataStoreType;
+  datastore_id: string;
+  imagekit_account_id: string;
+  is_member: boolean;
+  membership_fee: number;
+  membership_validity: string;
+  create_time: string;
+  modify_time: string;
+}
+
 export interface Brand {
+  id: number;
+  auth_user_id: string;
   name: string;
   logo_url: string;
   cuisine: string;
+  address?: string;
+  city?: string;
   description: string;
   payment_link: string;
   whatsapp: string;
@@ -13,21 +33,8 @@ export interface Brand {
   youtube?: string;
   custom?: string;
   full_menu_pic?: string;
-}
-
-export type BackendType = 'supabase' | 'gsheets';
-
-export interface VendorMapping {
-  id: number;
-  vendor_slug: string; // e.g., 'the-burger-den'
-  backend_type: BackendType; // 'supabase' or 'gsheets'
-  supabase_project_id?: string; // Which of the 4 Supabase projects
-  gsheet_id?: string;
-  imagekit_account_id: string; // Which of the 4 ImageKit accounts
-  membership_fee: number;
-  membership_validity: string; // ISO 8601 date string
-  is_member: boolean;
-  user_id?: string; // UUID from auth.users
+  create_time: string;
+  modify_time: string;
 }
 
 export type InStockStatus = 'yes' | 'no' | 'hide';
@@ -40,25 +47,41 @@ export type DishTag =
   | 'normal';
 
 export interface Dish {
-  id: string;
+  id: number;
+  brand_id: number;
   category: string;
   name: string;
-  image: string;
+  image?: string;
   reel?: string;
   description: string;
   price: number;
   instock: InStockStatus;
   veg: DietaryInfo;
   tag?: DishTag;
+  create_time: string;
+  modify_time: string;
 }
 
 export interface StatusItem {
+  id: number;
+  brand_id: number;
   type: 'image' | 'video' | 'text';
   content: string;
-  duration: number;
+  imagekit_file_id?: string;
+  create_time: string;
 }
 
 export type Status = StatusItem[];
+
+export interface VendorPayment {
+  id: number;
+  vendor_id: number;
+  payment: number;
+  payment_date: string;
+  payment_duration: string;
+  create_time: string;
+  modify_time: string;
+}
 
 export interface TopVendor {
   name: string;

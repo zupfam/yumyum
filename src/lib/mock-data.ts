@@ -1,18 +1,64 @@
-import { Dish, Brand } from './types';
+import { Brand, Dish } from './types';
 
-export const mockDish: Dish = {
-  id: 'mock-dish-1',
-  category: 'Mock Category',
-  name: 'Mock Dish',
-  image: 'https://via.placeholder.com/150',
-  description: 'A delicious mock dish.',
-  price: 10.99,
-  instock: 'yes',
-  veg: 'veg',
-  tag: 'bestseller',
-};
+export const MOCK_DISHES: Dish[] = [
+  {
+    id: 1,
+    brand_id: 1,
+    name: 'Veggie Burger',
+    category: 'Burgers',
+    price: 10,
+    veg: 'veg',
+    image: 'https://example.com/v.png',
+    description: '',
+    instock: 'yes',
+    create_time: '',
+    modify_time: '',
+  },
+  {
+    id: 2,
+    brand_id: 1,
+    name: 'Chicken Burger',
+    category: 'Burgers',
+    price: 12,
+    veg: 'non-veg',
+    image: 'https://example.com/c.png',
+    description: '',
+    instock: 'yes',
+    create_time: '',
+    modify_time: '',
+  },
+  {
+    id: 3,
+    brand_id: 1,
+    name: 'Margherita Pizza',
+    category: 'Pizza',
+    price: 15,
+    veg: 'veg',
+    image: 'https://example.com/m.png',
+    description: '',
+    instock: 'yes',
+    tag: 'bestseller',
+    create_time: '',
+    modify_time: '',
+  },
+  {
+    id: 4,
+    brand_id: 1,
+    name: 'Pepperoni Pizza',
+    category: 'Pizza',
+    price: 8,
+    veg: 'non-veg',
+    image: 'https://example.com/p.png',
+    description: '',
+    instock: 'yes',
+    create_time: '',
+    modify_time: '',
+  },
+];
 
-export const mockBrand: Brand = {
+export const MOCK_BRAND: Brand = {
+  id: 1,
+  auth_user_id: 'mock-user-id',
   name: 'Mock Brand',
   logo_url: 'https://via.placeholder.com/100',
   cuisine: 'Mock Cuisine',
@@ -20,4 +66,6 @@ export const mockBrand: Brand = {
   payment_link: 'https://example.com/pay',
   whatsapp: '1234567890',
   contact: '1234567890',
+  create_time: new Date().toISOString(),
+  modify_time: new Date().toISOString(),
 };

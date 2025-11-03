@@ -64,6 +64,8 @@ YumYum is a mobile-first digital menu platform designed for hyperlocal food vend
   | `name` | Required | The display name of the brand. |
   | `logo_url` | Required | URL for the brand's logo. |
   | `cuisine` | Required | Type of cuisine (e.g., "South Indian"). |
+  | `address` | Optional | The one-line address of the vendor. |
+  | `city` | Optional | The city where the vendor is located. |
   | `description`| Required | A short bio for the brand. |
   | `payment_link`| Required | UPI or other payment deep link. |
   | `whatsapp` | Required | The number for receiving WhatsApp orders. |
@@ -333,9 +335,9 @@ _ **Description:** Create the main brand header component, which acts as the "bi
 ### Epic 4: Vendor Media Uploader
 
 - **Story 4.1: Public Media Uploader (Multi-Account)**
-  - **Description:** Creates a simple, public `/vendor/upload` page. The uploader will check the `Admin_Config` sheet to determine which of the configured ImageKit accounts to use for that specific vendor.
+  - **Description:** Creates a simple, public `/[vendor-slug]/upload` page. The uploader will check the `Admin_Config` sheet to determine which of the configured ImageKit accounts to use for that specific vendor.
   - **Acceptance Criteria:**
-    1.  A page exists at `/vendor/upload` that is publicly accessible.
+    1.  A page exists at `/[vendor-slug]/upload` that is publicly accessible.
     2.  Before uploading, the system reads the `Admin_Config` to find the vendor's assigned `imagekit_account_id`.
     3.  The system uses the corresponding environment variables (e.g., `IMAGEKIT_[ID]_KEY`) to authenticate with the correct ImageKit account.
     4.  On upload, the file is sent to the assigned ImageKit account. If the upload fails, an alert is sent via the Lark webhook.

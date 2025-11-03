@@ -136,6 +136,8 @@ graph TD
     name: string;
     logo_url: string;
     cuisine: string;
+    address?: string;
+    city?: string;
     description: string;
     payment_link: string;
     whatsapp: string;

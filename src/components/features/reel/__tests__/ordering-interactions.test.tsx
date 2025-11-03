@@ -12,7 +12,8 @@ import {
 } from '@testing-library/react';
 
 const MOCK_DISH: Dish = {
-  id: '1',
+  id: 1,
+  brand_id: 1,
   name: 'Test Dish',
   category: 'Test',
   price: 10,
@@ -20,6 +21,8 @@ const MOCK_DISH: Dish = {
   description: '',
   instock: 'yes',
   veg: 'veg',
+  create_time: '',
+  modify_time: '',
 };
 
 const initialState = useCartStore.getState();

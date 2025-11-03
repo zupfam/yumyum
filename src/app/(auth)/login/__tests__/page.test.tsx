@@ -42,9 +42,7 @@ describe('LoginPage Integration', () => {
         screen.getByText(/This email is not registered with YumYum/i),
       ).toBeInTheDocument();
     });
-    expect(
-      screen.getByRole('button', { name: /Close/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Close/i })).toBeInTheDocument();
     expect(mockSignInWithOtp).not.toHaveBeenCalled();
   });
 
