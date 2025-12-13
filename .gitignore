@@ -1,32 +1,50 @@
-# dependencies
-node_modules
-.pnpm
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# build output
-dist
-out
-*/.next
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
 
 # misc
 .DS_Store
 *.pem
 
-# debug logs
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# env files
+# local env files
+.env*.local
 .env
-.env.*
-
-# test & docs
-coverage
-docs-build
 
 # vercel
 .vercel
 
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
 # custom
-.gemini
-journal
+.gemini/tmp
+.gemini/settings.json
+.gemini/mcp.json
+
+# supabase
+supabase/.branches
+supabase/.temp
+
+#playwright
+playwright-report
+test-results
