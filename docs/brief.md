@@ -1,485 +1,1091 @@
-# Project Brief: YumYum
+# Project Brief: YumYum (v4 – Metrics-Driven MVP)
+
+---
 
 ## Executive Summary
 
-- **Concept:** YumYum is a mobile-first digital storefront that brings the fast, visual, and interactive experience of
-  apps like Instagram to the world of hyperlocal food. It focuses on a "reels-style" vertical scrolling menu to maximize
-  engagement.
-- **Problem:** Street food vendors rely on static, costly printed menus, which prevents dynamic pricing, limits
-  upselling, and offers no channel for customer data collection or feedback.
-- **Solution:** We provide vendors with a custom-branded, high-performance web app, easily managed. Key features include a dynamic menu, WhatsApp order integration, and a feedback system designed to
-  boost positive reviews on social platforms, directly increasing a vendor's visibility and sales.
-- **Value Proposition:** For a monthly fee, YumYum gives vendors a powerful tool to increase sales, cut printing costs,
-  and build a digital brand, justifying the investment through clear ROI.
-
-## The Analog Trap: How Printed Menus Cost You Money and Customers
-
-Vendors are caught in an "Analog Trap," using outdated paper menus that actively drain profits and lose customers daily.
-
-- **FOR THE VENDOR: The Four Profit Leaks**
-    - **1. Direct Printing Costs:**
-        - **Pain:** Wasting money on re-printing menus for every small change.
-        - **Value:** Eliminate this recurring expense permanently.
-    - **2. Zero Upselling, Lost Revenue:**
-        - **Pain:** Missing the chance to increase order value with automated suggestions for add-ons or combos.
-        - **Value:** Gain a 24/7 digital salesman to boost every customer's bill.
-    - **3. No Customer Data, No Repeat Business:**
-        - **Pain:** A happy customer leaves forever because you have no way to contact them again.
-        - **Value:** Capture customer WhatsApp numbers to drive repeat sales and loyalty.
-    - **4. No Social Proof, No Free Marketing:**
-        - **Pain:** Good feedback is not captured and converted into 5-star Google reviews that attract new customers.
-        - **Value:** Turn your best customers into your most powerful marketing engine.
-
-## Proposed Solution: Your Digital Storefront
-
-We are building YumYum, a beautiful and blazing-fast digital storefront designed specifically for India's hyperlocal
-food vendors.
-
-- **FOR THE VENDOR: More Sales, Less Effort**
-    - **The Tool:** A custom-branded digital menu that you control and run your digital store.
-    - **The Result:**
-        - **Increase Sales:** Use a dynamic menu with photos, videos, and upselling prompts to sell more.
-        - **Save Money:** Stop printing menus forever. Update prices and items instantly, anytime.
-        - **Build Your Brand:** Get a professional, beautiful webpage that builds trust and attracts customers.
-        - **Get Customer Data:** Collect WhatsApp numbers to announce offers and bring customers back.
-
-- **FOR THE CUSTOMER: A Modern Menu Experience**
-    - **The Tool:** An instant, app-like experience on their phone, accessed via a simple QR code scan.
-    - **The Result:**
-        - **Visual & Engaging:** A menu that looks and feels like Instagram, with vertical scrolling through dishes.
-        - **Always Accurate:** See today's real menu, real prices, and daily specials.
-        - **Simple Ordering:** Add items to a cart and place the order directly on the vendor's WhatsApp.
-
-- **OUR KEY DIFFERENTIATOR: Radical Simplicity**
-    - While other solutions are complex and expensive, YumYum is built on a single principle: **powerful results from
-      simple tools.** We are not just another menu; we are a complete, easy-to-use business growth tool for the street
-      food vendor.
-
-## Target Users: Our Core Focus
-
-- ### Primary User Segment: The Ambitious Street Food Vendor
-    - **Who they are:** Owner-operators of food stalls, trucks, and small takeaway joints. Not tech-experts, but use
-      WhatsApp and Instagram daily.
-    - **Their Goal:** To grow their business, increase their daily income, and build a respected local brand.
-    - **Their Pains (Our Opportunity):** Frustrated by printing costs, know they could be making more money, and want a
-      simple way to get a digital presence.
-
-- ### Secondary User Segment: The Savvy Cloud Kitchen
-    - **Who they are:** Delivery-only kitchens reliant on high-commission food aggregator apps.
-    - **Their Goal:** To increase profit margins by bypassing high aggregator commissions and building a direct customer
-      relationship.
-    - **Their Pains (Our Opportunity):** Losing 25-40% of revenue to commissions and having no ownership of their
-      customer data.
-
-## Goals & Success Metrics (v2)
-
-- ### 1. Business Objectives (YumYum's Growth)
-    - **Phase 1: Rapid Market Entry (Launch - 1 Month)**
-        - Onboard **1+ paying vendor** (@ ₹500+ MRR) within **3 days** of launch.
-        - Onboard **5+ paying vendors** (@ ₹1k+ MRR) within **1 month**.
-    - **Phase 2: Niche Finalization (By Nov 30th)**
-        - Analyze data from initial vendors to identify and lock in our most profitable and scalable customer niche.
-    - **Phase 3: Niche Domination (Starting Dec 1st)**
-        - Become the #1 digital menu provider within our chosen niche and begin exploring strategic collaborations.
-
-- ### 2. Public Growth Objectives (The "Build in Public" Strategy)
-    - **Primary Goal:** Document the entire journey to build a personal brand and attract opportunities.
-    - **Content Velocity:** Publish **2+ pieces of content** per week.
-    - **Audience Growth:** Achieve **1,000+ engaged followers** on a primary social platform within 3 months.
-    - **Networking:** Build valuable, authentic connections with other founders, investors, and potential partners.
-
-## MVP Scope: What We Will Build First (v2)
-
-- ### Core Features (Must-Haves for Launch)
-    - **1. Vendor Brand Page:** A beautiful, mobile-first digital storefront.
-    - **2. Dynamic Menu:** An "Instagram-style" menu controlled by the vendor.
-    - **3. Supabase Backend:** Radical simplicity for menu management.
-    - **4. QR Code Generator:** The gateway for customers to access the menu.
-    - **5. Cart & WhatsApp Ordering:** Closes the order loop using the vendor's existing workflow.
-    - **6. Vendor Value Analytics:** A simple, clear report showing the vendor the value they are getting from YumYum.
-      This is the tangible **proof of value**.
-
-- ### MVP KPIs & Core Metrics (The Numbers We Will Track)
-    - **`menu_views`**: Total unique visitors to the menu.
-    - **`top_5_items`**: The most viewed/clicked-on menu items.
-    - **`add_to_cart_clicks`**: How many times items are added to a cart.
-    - **`order_placed_clicks`**: The critical conversion metric—how many times the "Place Order on WhatsApp" button is
-      clicked.
-    - **`feedback_clicks`**: How many customers engage with the feedback flow.
-
-## Technical Considerations: The Tech Stack (v3 - Final)
-
-- ### Core Technology Stack
-    - **Frontend:** Next.js, Shadcn UI, Aceternity UI, Magic UI.
-    - **Backend:** Free supabase tier.
-    - **Hosting:** Vercel for our Next.js frontend.
-
-## Operational Playbook & Metrics
-
-- ### Part 1: Pre-Onboarding - Vendor Discovery Questions
-    1. "Can you walk me through your process from when a customer arrives to when they leave?"
-    2. "Tell me about the last time you had to update your menu or prices. What was that like?"
-    3. "What are the biggest day-to-day frustrations you face?"
-    4. "Have you ever tried any other digital tools? How did that go?"
-
-- ### Part 2: Post-Onboarding - Key Performance Metrics (15-Day Review)
-    - **Vendor Success:** Activation, Menu Richness, Feature Adoption.
-    - **Business Health:** MRR, Active Vendors, Churn Rate, CAC.
-    - **"Build in Public" Content:** Follower Count, Engagement Rate, Content Velocity.
-
-- ### Part 3: Vendor Success & Feedback Questionnaire (Quarterly Check-in)
-    1. "What has been the biggest positive impact on your business from YumYum?"
-    2. "Are you seeing more customer feedback or repeat customers?"
-    3. "On a scale of 0-10, how likely are you to recommend YumYum?" (NPS)
-
-* **Needs:** They need a single, secure, in-app dashboard to manage their entire digital storefront. Their primary
-  requirement is the ability to instantly update menu items, prices, and availability via a simple CRUD interface,
-  without ever leaving the application. A secure login is essential to protect their business data.
-
-* **Payment Processing:** For the MVP, all subscription payments will be collected **manually**. No in-app payment
-  integration is required.
-* **Budget / Infrastructure Cost:** Strictly zero. The solution must operate within free usage tiers.
-* **Technical Architecture:** The application must remain a static Jamstack project.
-* **Free Tier Viability:** We assume the multi-account strategy is a sustainable way to scale while avoiding costs.
-
-# YumYum Architecture
-
-JamStack with Next.js, Supabase, deployed on Vercel with "Free Tier Maximization" principle.
-
-#### Platform and Infrastructure Choice
-
-* **Key Services:**
-    * **Vercel:** Hosting, CI/CD (Free Tier), SEO.
-    * **Supabase:** PostgreSQL Database, Authentication (Magic Link), Storage, Auto-generated APIs.
-    * **Cloudinary:** Multi-account media hosting and optimization.
-    * **Lark:** Webhook for critical alerts.
-* **Deployment Host and Regions:** Vercel (Global Edge Network), Supabase (`ap-south-1` Mumbai).
-
-* **Jamstack Architecture:** The frontend remains a pre-rendered application served from a global CDN, with dynamic
-  functionality handled by client-side JavaScript interacting with the Supabase backend.
-    * *Rationale:* This ensures maximum performance and a great user experience.
-* **Backend as a Service (BaaS):** We are leveraging Supabase to provide backend functionality out-of-the-box.
-    * *Rationale:* This dramatically reduces backend development time, allowing us to focus on the vendor-facing
-      dashboard and features.
-* **Row-Level Security (RLS):** All data access will be controlled at the database level using Supabase's RLS policies.
-    * *Rationale:* This is a highly secure and scalable way to enforce data isolation between vendors.
+* **Concept:** YumYum is a mobile-first digital storefront for hyperlocal food vendors in India. It replaces static paper menus with an Instagram-style, vertical, visual menu that drives *measurable demand*.
+* **Core Thesis:** YumYum is not a menu app. It is a **demand-generation and measurement engine** for street food vendors.
+* **Problem:** Vendors operate blind. Printed menus are static, expensive, and generate zero data. Vendors don’t know how many people view their menu, what items attract attention, or whether digital tools actually increase sales.
+* **Solution:** YumYum provides a blazing-fast digital storefront + a numbers dashboard that shows vendors **orders sent to WhatsApp**, menu engagement, and money saved.
+* **Value Proposition:** For a small monthly fee, vendors get proof that YumYum drives customers, not just clicks.
 
 ---
 
-### Section 3 of 18: Tech Stack
+## The Analog Trap: Why Paper Menus Kill Growth
 
-| Category             | Technology                         | Version       | Purpose                                      | Rationale                                                                             |
-|:---------------------|:-----------------------------------|:--------------|:---------------------------------------------|:--------------------------------------------------------------------------------------|
-| Frontend Language    | TypeScript                         | latest        | Type safety and scalability                  | Industry standard for modern web development, reduces errors.                         |
-| Frontend Framework   | Next.js                            | latest        | Core application framework                   | Provides a robust, performant, and scalable foundation for the UI.                    |
-| UI Component Library | Shadcn UI, Magic UI, Aceternity UI | latest        | UI components and animations                 | A rich ecosystem to accelerate development and achieve a high-quality, modern finish. |
-| State Management     | Zustand                            | latest        | Global state management                      | A small, fast, and scalable solution with a simple hook-based API.                    |
-| Backend Language     | TypeScript                         | latest        | Language for Supabase Edge Functions         | To write any necessary server-side logic in a familiar language.                      |
-| Backend Framework    | Supabase                           | latest        | Backend as a Service (BaaS)                  | Provides database, auth, and APIs out-of-the-box, accelerating development.           |
-| API Style            | REST                               | via PostgREST | Auto-generated APIs for database interaction | Supabase provides a powerful and secure RESTful API layer automatically.              |
-| Database             | Supabase (Postgres)                | latest        | Primary data store for premium vendors       | A robust, open-source relational database with excellent performance.                 |
-| Cache                | N/A                                | N/A           | Client-side caching will be used             | Caching will be handled at the client level to improve perceived performance.         |
-| File Storage         | Cloudinary                         | N/A           | Multi-account media hosting and optimization | A powerful solution for managing and serving images efficiently.                      |
-| Authentication       | Supabase Auth                      | latest        | Secure user authentication                   | Provides Magic Link (passwordless) login out-of-the-box.                              |
-| Frontend Testing     | Jest & React Testing Library       | latest        | Unit and integration testing                 | Industry-standard tools for testing React applications.                               |
-| Backend Testing      | Jest                               | latest        | Testing for Supabase Edge Functions          | To ensure any custom server-side logic is reliable.                                   |
-| E2E Testing          | Playwright                         | latest        | End-to-end user flow testing                 | A modern and reliable choice for ensuring critical user journeys work as expected.    |
-| Build Tool           | SWC (via Next.js)                  | latest        | Fast code compilation                        | Integrated into Next.js for optimal performance.                                      |
-| CI/CD                | Vercel                             | N/A           | Continuous integration & deployment          | Seamlessly integrated with the hosting platform for automated builds and deploys.     |
-| Monitoring           | Google Analytics 4                 | N/A           | User behavior and funnel tracking            | Provides essential product engagement KPIs.                                           |
-| Logging              | Lark Webhook                       | N/A           | Critical error alerting                      | A simple mechanism to alert the development team of critical failures.                |
-| CSS Framework        | Tailwind CSS                       | latest        | Utility-first styling                        | Allows for rapid UI development and easy maintenance.                                 |
+Street food vendors are stuck in an analog loop that leaks money daily.
 
----
+### The Four Profit Leaks
 
-### Section 7 of 18: External APIs
+1. **Recurring Printing Costs**
 
-This section details the external services the YumYum Premium Tier will integrate with.
+   * Reprinting menus for price changes, availability, or new items.
+   * ₹300–₹1000/month silently burned.
 
-#### Supabase API
+2. **Zero Upselling**
 
-* **Purpose:** Serves as the primary backend for data storage, authentication, and serverless functions.
-* **Documentation:** [https://supabase.com/docs](https://supabase.com/docs)
-* **Authentication:** API Key and JWT for client-side access.
+   * No way to highlight best sellers, combos, or high-margin items.
 
-#### Cloudinary API
+3. **No Demand Visibility**
 
-* **Purpose:** Hosts, optimizes, and serves all media assets (vendor logos, dish images).
-* **Documentation:** [https://cloudinary.com/documentation](https://cloudinary.com/documentation)
-* **Authentication:** API Key and Secret for upload operations.
+   * Vendors have no idea how many people looked at their menu vs ordered.
 
-#### Lark Webhook API
+4. **No Customer Loop**
 
-* **Purpose:** Used for sending critical system alerts to the development team's communication channel.
-* **Documentation:** Specific to the configured incoming webhook URL.
-* **Authentication:** None (relies on the secrecy of the webhook URL).
+   * Happy customers leave with no way to re-engage them.
+
+**Insight:** Vendors don’t need “tech”. They need **clarity and leverage**.
 
 ---
 
+## Proposed Solution: YumYum Digital Storefront
 
-### Section 14 of 18: Deployment Architecture
+### For Vendors (Primary Value)
 
-This section outlines the deployment strategy for the YumYum Premium Tier application.
+* **Digital Brand Page:** A professional, mobile-first storefront accessed via QR code.
+* **Instagram-Style Menu:** Vertical, visual scrolling that maximizes attention.
+* **WhatsApp Ordering:** Zero workflow change. Orders land where vendors already operate.
+* **Vendor Metrics Dashboard:** Clear proof of value via demand numbers.
 
-#### Deployment Strategy
+**Outcomes:**
 
-* **Platform:** The frontend application is hosted and deployed on **Vercel**. The backend services (database, auth,
-  functions) are managed by **Supabase**.
-* **Deployment Method:** We use a **Continuous Deployment** model integrated with our Git repository.
-    * **Production:** Every push or merge to the `main` branch automatically triggers a build and deployment to the
-      production environment.
-    * **Previews:** A unique preview deployment is automatically generated for every pull request, allowing for review
-      and testing before merging.
-
-#### CI/CD Pipeline
-
-* **Provider:** The CI/CD pipeline is managed entirely by **Vercel**.
-* **Build Command:** `pnpm build`
-* **Output Directory:** `.next`
-* **Framework Preset:** Next.js
-
-#### Database Migrations
-
-* **Tooling:** Supabase database schema changes will be managed using the **Supabase CLI**.
-* **Workflow:**
-    1. Developers will generate new migration files locally using the CLI.
-    2. These migration files will be committed to the repository in the `/supabase/migrations` directory.
-    3. When deploying changes to the Supabase backend (e.g., staging or production), these migrations will be applied
-       manually using the Supabase CLI to ensure controlled updates.
+* More orders
+* No printing costs
+* Visibility into what actually sells
 
 ---
 
-### Section 15 of 18: Security and Performance
+### For Customers
 
-This section covers the key strategies for ensuring the application is secure and performant.
-
-#### Security Requirements
-
-Our security model is based on a defense-in-depth approach, leveraging the capabilities of our chosen platforms.
-
-* **Authentication:** All vendor authentication is handled by **Supabase Auth**, using passwordless Magic Links. This
-  outsources the complexity of password management and reduces the risk of credential theft.
-* **Authorization:** The cornerstone of our data security is **Postgres Row-Level Security (RLS)**. RLS policies,
-  defined in Section 11, ensure that a vendor can *only* access and modify their own data. These policies are enforced
-  at the database level, providing a robust barrier against unauthorized data access.
-* **API Security:** By using the official Supabase client library, we ensure that JWTs are managed securely and
-  automatically. All API access is governed by the RLS policies.
-* **Secret Management:** All sensitive information, such as API keys and database URLs, are stored as environment
-  variables in Vercel and are not exposed to the client-side application.
-* **Infrastructure Security:** We rely on Vercel and Supabase to manage infrastructure-level security, including DDoS
-  protection, firewalling, and physical security.
-
-#### Performance Optimization
-
-* **Public Pages (SEO):** The public-facing vendor pages (`/[vendor_slug]`) use **Static Site Generation (SSG) with
-  Incremental Static Regeneration (ISR)**. This provides extremely fast static pages from the CDN that are perfect for
-  SEO, while ensuring data is kept fresh automatically in the background.
-* **Authenticated Dashboard (CSR):** The vendor dashboard is a **Client-Side Rendered (CSR)** application. This provides
-  a fast, app-like experience after the initial load, as navigation between sections does not require full page reloads.
-* **Global CDN:** All static assets and server-rendered pages are cached and served from **Vercel's Global Edge Network
-  **, ensuring low latency for users worldwide.
-* **Media Optimization:** All images and media assets are served via **Cloudinary**, which provides automatic
-  optimization, format selection (e.g., WebP), and CDN delivery.
-* **Client-Side Caching:** The application will leverage browser caching and client-side state management (Zustand) to
-  minimize redundant data fetching during a user session.
+* Instant QR-based access (no app install)
+* Visual, engaging menu experience
+* Accurate pricing & availability
+* Simple WhatsApp ordering
 
 ---
 
-### Section 17 of 18: Coding Standards
+## Key Differentiator: Radical Simplicity
 
-To ensure a high-quality and consistent codebase, all development must adhere to the following standards.
+YumYum follows one principle:
 
-* **Naming Conventions:**
-    * **Components:** `PascalCase` (e.g., `DishCard`, `VendorDashboard`).
-    * **Files:** `kebab-case` (e.g., `use-debounce.ts`, `gsheets.ts`).
-    * **Functions & Variables:** `camelCase` (e.g., `getDishes`, `vendorId`).
-    * **Types & Interfaces:** `PascalCase` (e.g., `VendorMapping`, `Dish`).
+> **If it doesn’t create a number that matters, it doesn’t exist.**
+
+No complex POS. No payments (yet). No bloated dashboards.
 
 ---
 
-### Section 18 of 18: Error Handling & Monitoring
+## Target Users
 
-#### Monitoring
+### Primary Segment: Ambitious Street Food Vendors
 
-Our monitoring strategy is focused on three key areas:
+* Owner-operated stalls, trucks, and takeaway joints
+* Daily WhatsApp users
+* Want growth, not complexity
 
-1. **Application Performance:**
-    * **Tool:** Vercel Analytics.
-    * **Purpose:** To monitor Core Web Vitals (LCP, FID, CLS) and overall application performance from the perspective
-      of real users.
+### Secondary Segment: Cloud Kitchens
 
-2. **Critical Failure Alerting:**
-    * **Tool:** Lark Webhook.
-    * **Purpose:** To provide immediate, real-time alerts to the development team when a critical backend operation
-      fails. This is reserved for severe issues that require immediate attention, such as a failure to connect to the
-      Supabase database or a critical authentication error.
-
-1. **NFR1:** The entire system architecture must operate within the free tiers of all underlying platforms.
-2. **NFR2:** The backend architecture must support a multi-account strategy for Supabase and Cloudinary.
-4. **NFR4:** The Supabase backend must enforce Row Level Security (RLS).
-5. **NFR5:** The vendor management dashboard shall be a Client-Side Rendered (CSR) application.
-6. **NFR6:** For the MVP, all subscription payments shall be collected manually.
-7. **NFR7:** For the MVP, all data migration shall be a manual process.
-8. **NFR8:** The authentication system must ensure a single user identity, linking new login methods to an existing user
-   if they share the same verified email.
-9. **NFR9:** Comprehensive documentation must be maintained. A `/wiki` directory will be created at the project root to
-   house all technical documentation, workflow guides, and user training materials.
+* Want to reduce dependency on high-commission aggregators
+* Want direct customer demand visibility
 
 ---
 
-### 3. User Interface Design Goals
+## Success Metrics (North-Star Driven)
 
-* **Overall UX Vision:** To provide a simple, clean, and highly efficient in-app dashboard that makes menu and brand
-  management feel effortless.
-* **Key Interaction Paradigms:** The dashboard will use standard UI patterns: simple forms, tables/lists for viewing,
-  and clear buttons for actions.
-* **Core Screens and Views:**
-    1. Login Page (for Magic Link)
-    2. Vendor Dashboard , use vendor slugs (`domain/slug`)
-    3. Landing Page
-* **Accessibility:** WCAG 2.1 Level AA
-* **Target Device and Platforms:** Web Responsive (Mobile & Desktop).
+### The One Metric That Decides Everything
+
+> **Orders Sent to WhatsApp per Vendor per Day**
+
+* > 5/day → Strong signal
+* 1–4/day → Needs optimization
+* <1/day → Value proposition broken
 
 ---
-### Section 9 of 18: Database Schema (v3)
 
-This section provides the SQL schema for the tables in our Supabase Postgres database, now including custom `ENUM` types
-for data integrity.
+## MVP Scope (What We Build First)
+
+### Core Features
+
+1. Vendor Digital Brand Page
+2. Instagram-style Dynamic Menu
+3. QR Code Generator
+4. **Client-Side Cart & Order Summary**
+
+   * Customers can add multiple items to a cart
+   * Review quantities and total price
+   * One-tap **Send Order on WhatsApp** with a pre-filled, vendor-friendly message
+5. Cart → WhatsApp Order Flow
+6. Vendor Metrics Dashboard (Numbers Only)
+7. Secure Vendor Login (Magic Link)
+
+---
+
+## Metrics Architecture (Single Source of Truth)
+
+This section explains **exactly what is tracked, why it is tracked, how it is recorded, and how each metric is used** across Vendor, Founder, and Investor dashboards.
+
+YumYum follows one strict rule:
+
+> **If a metric does not help us decide “ship, fix, or stop”, it is not tracked.**
+
+---
+
+### Event-Based Tracking Model (Core Principle)
+
+All analytics are powered by a **single append-only event table**: `menu_events`.
+
+Why event-based?
+
+* Prevents premature aggregation mistakes
+* Allows new metrics to be derived later without schema changes
+* Keeps infra simple and cheap
+
+Every meaningful user action emits **exactly one event**.
+
+---
+
+### Canonical Events (Authoritative)
+
+Below is the final, locked list of events. No additional events should be added without a clear business question.
+
+---
+
+#### 1. `menu_view`
+
+**When it fires:**
+
+* When a customer opens a vendor’s menu via QR scan or direct link
+
+**Why it exists:**
+
+* Measures raw demand / footfall
+* Answers: *Are people even looking at this vendor?*
+
+**Recorded as:**
+
+```text
+vendor_id, event='menu_view'
+```
+
+**Used in:**
+
+* Vendor Dashboard → “Menu Views”
+* Founder Dashboard → Activation & traffic baselines
+* Investor Story → Demand volume
+
+---
+
+#### 2. `dish_view`
+
+**When it fires:**
+
+* When a dish card enters the viewport or is tapped for details
+
+**Why it exists:**
+
+* Measures attention distribution inside the menu
+* Answers: *Which items attract curiosity?*
+
+**Recorded as:**
+
+```text
+vendor_id, dish_id, event='dish_view'
+```
+
+**Used in:**
+
+* Vendor Dashboard → Top viewed dishes
+* Menu optimization decisions (pricing, photos, positioning)
+
+---
+
+#### 3. `add_to_cart`
+
+**When it fires:**
+
+* When a customer adds a dish to the cart
+
+**Why it exists:**
+
+* Measures intent creation
+* Answers: *Did attention convert into desire?*
+
+**Recorded as:**
+
+```text
+vendor_id, dish_id, event='add_to_cart'
+```
+
+**Used in:**
+
+* Menu conversion rate
+* Funnel drop-off analysis
+* Vendor coaching (“people like it but don’t order”)
+
+---
+
+#### 4. `order_click` (⭐ North-Star Event)
+
+**When it fires:**
+
+* When a customer clicks “Send Order on WhatsApp”
+
+**Why it exists:**
+
+* Closest measurable proxy to revenue
+* Answers: *Did YumYum create an order opportunity?*
+
+**Recorded as:**
+
+```text
+vendor_id, event='order_click'
+```
+
+**Used in:**
+
+* Vendor Dashboard → “Orders Sent to WhatsApp”
+* Founder Dashboard → Product–market fit signal
+* Investor Metrics → Demand engine narrative
+
+**Important:**
+This is the **single most important metric in the entire system**.
+
+---
+
+#### 5. `update_view`
+
+**When it fires:**
+
+* When a vendor update (Today’s Special / status) is shown
+
+**Why it exists:**
+
+* Measures visibility of vendor updates
+* Answers: *Are customers noticing daily updates?*
+
+**Recorded as:**
+
+```text
+vendor_id, update_id, event='update_view'
+```
+
+**Used in:**
+
+* Update effectiveness tracking
+* Ranking signals for discovery rings
+
+---
+
+#### 6. `update_click`
+
+**When it fires:**
+
+* When a customer taps a vendor update
+
+**Why it exists:**
+
+* Measures engagement beyond passive exposure
+* Answers: *Did the update pull attention?*
+
+**Recorded as:**
+
+```text
+vendor_id, update_id, event='update_click'
+```
+
+**Used in:**
+
+* Update performance scoring
+* Vendor messaging (“this update worked well”)
+
+---
+
+#### 7. `update_interest`
+
+**When it fires:**
+
+* Each bounded multi-tap interaction (max 5 per session)
+
+**Why it exists:**
+
+* Captures **intensity of intent**, not just binary interest
+* Answers: *How badly do people want this?*
+
+**Recorded as:**
+
+```text
+vendor_id, update_id, event='update_interest'
+```
+
+**Used in:**
+
+* Update ranking
+* “Popular today” signals
+* Internal demand scoring (never raw counts shown)
+
+---
+
+#### 8. `feedback_submit`
+
+**When it fires:**
+
+* When a customer successfully submits feedback
+
+**Why it exists:**
+
+* Measures trust and emotional engagement
+* Answers: *Do customers care enough to respond?*
+
+**Recorded as:**
+
+```text
+vendor_id, event='feedback_submit'
+```
+
+**Used in:**
+
+* Vendor trust indicators
+* Paid Insights tier value
+
+---
+
+### What We Explicitly Do NOT Track
+
+The following are intentionally excluded to avoid noise:
+
+* `remove_from_cart`
+* Scroll depth
+* Time on page
+* Raw like counts
+
+**Reason:** These metrics do not change product decisions at this stage.
+
+---
+
+### How Metrics Power Each Dashboard
+
+#### Vendor Dashboard
+
+Purpose: **Payment justification and behavior change**.
+
+Derived Metrics:
+
+* Orders Sent = `count(order_click)`
+* Menu Views = `count(menu_view)`
+* Conversion Rate = orders / views
+* Top Dishes = `dish_view` + `add_to_cart`
+* Update Performance = `update_view` → `update_click`
+
+---
+
+#### Founder Dashboard
+
+Purpose: **Truth, not motivation**.
+
+Derived Metrics:
+
+* Active Vendors (7-day `order_click`)
+* Avg Orders / Vendor / Day
+* Retention Proxy (vendors with activity after 15 days)
+* Vendor Segmentation:
+
+  * Power: ≥5 orders/day
+  * Weak: 1–4 orders/day
+  * Bad: <1 order/day
+
+---
+
+#### Investor Metrics
+
+Purpose: **Narrative clarity**.
+
+Derived Metrics:
+
+* Total Orders Sent (monthly)
+* Orders per Vendor per Day
+* Active Vendor Ratio
+* MRR vs Demand Growth
+* Infra Cost per Vendor (~₹0)
+
+---
+
+### Final Metric Philosophy (Non-Negotiable)
+
+> YumYum tracks **outcomes**, not curiosity.
+
+Every metric exists to answer one question:
+
+**Is YumYum creating measurable demand for vendors?**
+
+If the answer is unclear, the metric is removed.
+
+---
+
+## Dashboards by Audience
+
+> All dashboards are powered by the same event-based data. The difference is **presentation, not data**.
+
+### 1. Vendor Dashboard (Sales Tool)
+
+Displayed Metrics:
+
+1. Orders Sent to WhatsApp
+2. Menu Views
+3. Menu Conversion Rate
+4. Top 3 Viewed / Added Dishes
+5. ₹ Saved on Printing
+
+**Purpose:** Justify monthly payment.
+
+---
+
+### 2. Founder Dashboard (Truth Machine)
+
+Core Metrics:
+
+* Active Vendors (7-day)
+* Avg Orders / Vendor / Day
+* Vendor Retention (15-day)
+* MRR
+* Vendor Segmentation (Power / Weak / Dead)
+
+**Purpose:** Decide ship, fix, or kill.
+
+---
+
+### 3. Investor Metrics (Story Layer)
+
+* Total Orders Sent (Monthly)
+* Active Vendor Ratio
+* MRR Growth (MoM)
+* Revenue per Vendor
+* Infra Cost per Vendor (~₹0)
+
+**Narrative:** YumYum is a demand engine, not a menu SaaS.
+
+---
+
+## Technical Architecture (MVP-Safe)
+
+### Architecture Principles
+
+* Jamstack
+* Zero infra cost
+* Single Supabase project
+* Multi-tenant via RLS
+
+---
+
+### Tech Stack
+
+* **Frontend:** Next.js, TypeScript, Tailwind, Shadcn UI
+* **State:** Zustand
+* **Backend:** Supabase (Auth, Postgres, APIs)
+* **Hosting:** Vercel (Free Tier)
+* **Media:** Cloudinary
+
+---
+
+## Database Schema (Canonical – Single Source of Truth)
+
+The following schema definitions are authoritative. Any earlier references are superseded by this section.
+
+### Vendors
 
 ```sql
--- Create ENUM types first
-CREATE TYPE instock_status AS ENUM ('yes', 'no', 'hide');
-CREATE TYPE veg AS ENUM ('veg', 'non-veg');
-CREATE TYPE status_type AS ENUM ('image', 'video', 'text');
+create table vendors (
+  id uuid primary key references auth.users(id),
+  slug text unique not null,
+  name text not null,
+  category text not null,
+  whatsapp_number text not null,
+  latitude double precision,
+  longitude double precision,
+  is_active boolean default true,
+  created_at timestamptz default now()
+);
+```
 
--- In the PRIMARY Supabase project
--- This table maps a vendor to their dedicated Supabase project and Cloudinary account.
-CREATE TABLE public.vendor_mappings
-(
-    id                    bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-    vendor_slug           text                     NOT NULL UNIQUE,
-    backend_type          text                     NOT NULL, -- 'supabase' or 'gsheets'
-    supabase_project_id   text,
-    gsheet_id             text,
-    cloudinary_account_id text                     NOT NULL,
-    created_at            timestamp with time zone NOT NULL DEFAULT now()
+### Vendor Social Accounts
+
+```sql
+create type social_platform as enum (
+  'instagram',
+  'facebook',
+  'whatsapp',
+  'youtube',
+  'twitter',
+  'website'
 );
 
------------------------------------------------------------------
-
--- In EACH of the 4 VENDOR Supabase projects
--- Stores the vendor's brand profile information.
-CREATE TABLE public.brand
-(
-    id         bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-    vendor_id  uuid                     NOT NULL REFERENCES auth.users (id),
-    name       text                     NOT NULL,
-    -- ... other brand fields
-    created_at timestamp with time zone NOT NULL DEFAULT now()
+create table vendor_social_accounts (
+  id bigint generated always as identity primary key,
+  vendor_id uuid not null references vendors(id) on delete cascade,
+  platform social_platform not null,
+  handle text not null,
+  url text not null,
+  is_primary boolean default false,
+  created_at timestamptz default now(),
+  unique (vendor_id, platform, handle)
 );
+```
 
--- Stores the individual menu items for a vendor.
-CREATE TABLE public.dishes
-(
-    id          bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-    vendor_id   uuid                     NOT NULL REFERENCES auth.users (id),
-    category    text                     NOT NULL,
-    name        text                     NOT NULL,
-    description text,
-    price       real,
-    instock     instock_status                    DEFAULT 'yes', -- Use ENUM type
-    veg         dietary_info,                                    -- Use ENUM type
-    tag         text,
-    image       text,
-    reel        text,
-    created_at  timestamp with time zone NOT NULL DEFAULT now()
+### Vendor Updates (Daily Attention Slots)
+
+```sql
+create table vendor_updates (
+  id bigint generated always as identity primary key,
+  vendor_id uuid not null references vendors(id) on delete cascade,
+  title text not null,
+  description text,
+  media_url text,
+  starts_at timestamptz default now(),
+  expires_at timestamptz not null,
+  interest_count int default 0,
+  created_at timestamptz default now()
 );
+```
 
--- Stores daily status updates from the vendor.
-CREATE TABLE public.status
-(
-    id         bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-    vendor_id  uuid                     NOT NULL REFERENCES auth.users (id),
-    content    text                     NOT NULL,
-    type       status_type              NOT NULL, -- Use ENUM type
-    created_at timestamp with time zone NOT NULL DEFAULT now()
+Rules:
+
+* Maximum **3 active updates** per vendor
+* Active = `now() between starts_at and expires_at`
+
+### Update Interactions (Bounded Multi-Tap Interest)
+
+```sql
+create table update_interactions (
+  id bigint generated always as identity primary key,
+  update_id bigint not null references vendor_updates(id) on delete cascade,
+  session_id text not null,
+  tap_count int default 1,
+  last_tapped_at timestamptz default now(),
+  unique (update_id, session_id)
+);
+```
+
+### Dishes
+
+```sql
+create table dishes (
+  id bigint generated always as identity primary key,
+  vendor_id uuid not null references vendors(id) on delete cascade,
+  category text not null,
+  name text not null,
+  description text,
+  price numeric(10,2) not null,
+  instock text default 'yes',
+  image_url text,
+  created_at timestamptz default now()
+);
+```
+
+### Menu Events (Analytics – Single Event Stream)
+
+This table is the **behavioral backbone of YumYum**. Every metric, dashboard, and decision derives from this single event stream.
+
+The design is intentional, strict, and must not be altered casually.
+
+---
+
+## Core Design Principle
+
+`menu_events` models **user actions**, not entities.
+
+A user action always happens in the context of **exactly one surface**:
+
+* the menu as a whole
+* a specific dish
+* a specific vendor update
+
+Instead of separate tables per surface, YumYum uses a **polymorphic event stream**.
+
+This keeps analytics unified, extensible, and cheap to operate.
+
+---
+
+## Table Definition (Authoritative)
+
+```sql
+create table menu_events (
+  id bigint generated always as identity primary key,
+  vendor_id uuid not null,
+  dish_id bigint null,
+  update_id bigint null,
+  event text not null,
+  created_at timestamptz default now()
 );
 ```
 
 ---
 
+## Context Invariant (Non-Negotiable)
 
+For every row in `menu_events`:
 
-### Section 4 of 18: Data Models (v2)
+* At most **one** of `dish_id` or `update_id` may be non-null
+* They must **never** be set together
 
-#### `vendor_mappings`
+This ensures each event has one and only one context.
 
-* **Purpose:** To act as the master directory for all vendors. It will determine whether a vendor's data is on Google
-  Sheets or Supabase and provide the necessary connection info.
-* **TypeScript Interface:**
-  ```typescript
-  export type BackendType = 'supabase' | 'gsheets';
+### Enforced Constraint
 
-  export interface VendorMapping {
-    id: number;
-    vendor_slug: string; // e.g., 'the-burger-den'
-    backend_type: BackendType; // 'supabase' or 'gsheets'
-    
-    // Supabase-specific fields
-    supabase_project_id?: string; // Which of the 4 Supabase projects
-    
-    // Google Sheets-specific fields
-    gsheet_id?: string;
-
-    // Cloudinary account is common to both
-    cloudinary_account_id: string; // Which of the 4 Cloudinary accounts
-  }
-  ```
-
-#### `Brand`
-
-* **Purpose:** Represents the vendor's brand identity.
-* **TypeScript Interface:** (No changes from previous version)
-  ```typescript
-  export interface Brand {
-    id: number;
-    vendor_id: string; // Foreign Key to auth.users.id
-    // ... all other brand fields
-  }
-  ```
-
-#### `Dish`
-
-* **Purpose:** Represents a single menu item.
-* **TypeScript Interface (Updated):**
-  ```typescript
-  export interface Dish {
-    id: number;
-    vendor_id: string; // Foreign Key to auth.users.id
-    category: string;
-    name: string;
-    description: string | null;
-    price: number | null;
-    instock: 'yes' | 'no' | 'hide' | null;
-    veg: 'veg' | 'non-veg' | null;
-    tag: string | null;
-    image: string | null;
-    reel: string | null;
-    created_at: string;
-  }
-  ```
-
-#### `Status`
-
-* **Purpose:** Represents a daily status update.
-* **TypeScript Interface:** (No changes from previous version)
-  ```typescript
-  export interface Status {
-    id: number;
-    vendor_id: string; // Foreign Key to auth.users.id
-    content: string;
-    type: 'image' | 'video' | 'text';
-  }
-  ```
+```sql
+alter table menu_events
+add constraint one_context_only
+check (
+  (dish_id is null and update_id is not null)
+  or (dish_id is not null and update_id is null)
+  or (dish_id is null and update_id is null)
+);
+```
 
 ---
+
+## Event Context Matrix
+
+| Event           | dish_id | update_id | Meaning                  |
+| --------------- | ------- | --------- | ------------------------ |
+| menu_view       | null    | null      | Menu opened              |
+| dish_view       | set     | null      | Dish viewed              |
+| add_to_cart     | set     | null      | Dish added to cart       |
+| order_click     | null    | null      | WhatsApp order initiated |
+| update_view     | null    | set       | Vendor update shown      |
+| update_click    | null    | set       | Vendor update opened     |
+| update_interest | null    | set       | Interest tap             |
+| feedback_submit | null    | null      | Feedback submitted       |
+
+Any deviation from this table is a bug.
+
+---
+
+## Why Dish and Update Are Separate Dimensions
+
+Dish events represent **transactional intent** (what a customer may buy).
+
+Update events represent **promotional intent** (what shapes choice today).
+
+Separating these allows YumYum to answer questions like:
+
+* Do updates increase dish views?
+* Which updates lead to orders?
+* Which dishes perform better when highlighted?
+
+---
+
+## Implementation Guidelines (Mandatory)
+
+1. **Emit exactly one event per user action**. No batching.
+2. **Events are written at interaction time**, never inferred later.
+3. **Send raw events only**. Aggregation happens in SQL.
+4. Duplicate events are acceptable; correctness is statistical.
+
+---
+
+## Dashboard Usage
+
+### Vendor Dashboard
+
+* Orders Sent = count(order_click)
+* Menu Views = count(menu_view)
+* Conversion = orders / views
+* Top Dishes = dish_view + add_to_cart
+* Update Performance = update_view → update_click → update_interest
+
+### Founder Dashboard
+
+* Activation = first order_click
+* Retention proxy = activity after 15 days
+* Segmentation by order volume
+
+### Investor Metrics
+
+* Total demand generated
+* Demand per vendor
+* Growth over time
+
+---
+
+This structure matches industry-standard event modeling and should be treated as final. All dashboards and analytics derive exclusively from `menu_events`.
+
+---
+
+## Security Model
+
+* Supabase Magic Link Auth
+* Row Level Security (vendor_id = auth.uid())
+* No cross-vendor access possible
+
+---
+
+## Operating Constraints
+
+* Zero paid infrastructure
+* Manual vendor onboarding
+* Manual subscription collection
+* Manual migrations
+
+---
+
+## Validation Plan (30-Day Sprint)
+
+**Success Criteria:**
+
+* 5 paying vendors
+* Avg ≥3 orders/day/vendor
+* ≥30% 15-day retention
+* At least one unsolicited vendor testimonial
+
+**Failure = Pivot or Kill**
+
+---
+
+## Final Positioning
+
+> YumYum helps street food vendors **see demand, capture it, and grow it** — using the tools they already trust.
+
+---
+
+**Status:** Ready to build, test, and validate.
+
+---
+
+## X-Factors & Growth Levers (Final)
+
+YumYum’s advantage comes from **behavioral signals**, not social gimmicks. All growth levers are designed to:
+
+* Increase vendor retention
+* Improve customer choice
+* Avoid spam, gaming, and trust erosion
+
+---
+
+### X-Factor 1: Proof of Growth (In-App)
+
+**What it is:**
+Auto-generated, positive performance statements shown prominently in the vendor dashboard.
+
+**Examples:**
+
+* “YumYum sent **43 customers** to your WhatsApp this week 📈”
+* “Your menu is trending better than last week 💪”
+
+**Logic:**
+
+* Based on `order_click` events
+* Compared week-over-week or over a selected date range
+* Messaging is always neutral or positive (no negative deltas shown)
+
+**Purpose:**
+
+* Creates pride and habit
+* Makes ROI obvious
+* Reinforces payment justification
+
+---
+
+### X-Factor 2: Founder-Controlled WhatsApp Performance Reports
+
+**What it is:**
+A manual, founder-operated reporting console that generates WhatsApp-ready performance messages.
+
+**Workflow:**
+
+1. Founder selects start date, end date, and vendors (all or multi-select)
+2. Clicks **Generate Reports**
+3. System aggregates metrics per vendor
+4. Each report is sent to a Lark webhook, one vendor at a time
+5. Founder manually copy-pastes reports into vendor WhatsApp chats
+
+**Why manual first:**
+
+* Zero WhatsApp policy risk
+* Full control over cadence and tone
+* High qualitative feedback loop
+
+**Sample Message:**
+
+```
+📊 YumYum Performance Report
+Period: {{start}} → {{end}}
+
+• Menu views: {{menu_views}}
+• Orders sent: {{orders}}
+• Top item: {{top_item}}
+
+YumYum is working for you 💪
+```
+
+---
+
+### X-Factor 3: Vendor Updates (Daily Attention Slots)
+
+**What it is:**
+Short-lived, high-visibility updates that shape customer choice in real time.
+
+**Rules:**
+
+* Maximum **3 active updates per vendor**
+* Automatically expire (default 24 hours)
+* Always displayed at the top of the menu
+
+**Use Cases:**
+
+* Today’s special
+* Limited offers
+* Sold-out notices
+* Closing early
+
+**Tracking:**
+
+* `update_view`
+* `update_click`
+
+---
+
+### X-Factor 4: Bounded Multi-Tap Interest (Medium-style, Controlled)
+
+**What it is:**
+A lightweight intent signal inspired by Medium claps, redesigned for high-trust, no-login environments.
+
+**Customer Behavior:**
+
+* Customers can tap an update up to **5 times** to express interest
+* Visual feedback on each tap
+* No visible counters shown to customers
+
+**System Rules:**
+
+* Interest is tracked per anonymous session
+* One session can contribute a maximum of 5 taps per update
+* Raw counts are never exposed publicly
+
+**Purpose:**
+
+* Captures intensity of demand
+* Improves update ranking
+* Resists spam and gaming
+
+---
+
+### X-Factor 5: Contextual Local Discovery (Non-Distracting)
+
+This section explains **exactly how YumYum selects and ranks “other vendor updates”** shown to a customer, with the goal of **delight without distraction**.
+
+The core constraint is non-negotiable:
+
+> When a customer scans a vendor’s QR, their primary intent is to order from *that vendor*.
+> Secondary discovery must add context, not steal attention.
+
+---
+
+## Conceptual Model
+
+YumYum does **not** have a global feed.
+
+Instead, it generates a **contextual discovery slice** at request time, scoped to:
+
+* Current vendor
+* Physical proximity
+* Time (what’s active *right now*)
+
+This ensures relevance, fairness, and vendor trust.
+
+---
+
+## Visual Hierarchy
+
+1. **Primary Ring (Emphasized)**
+
+   * Always the current vendor’s active updates (up to 3)
+   * Largest size, branded
+
+2. **Secondary Rings (De-emphasized)**
+
+   * Updates from other vendors
+   * Smaller, muted styling
+   * No prices, menus, or comparisons shown
+
+This hierarchy ensures conversion is never compromised.
+
+---
+
+## Selection Logic (Step-by-Step)
+
+### Step 1: Anchor on the Current Vendor
+
+Input context:
+
+* `current_vendor_id`
+* `current_vendor.latitude`
+* `current_vendor.longitude`
+* `current_vendor.category`
+
+Primary updates are fetched **only** for this vendor.
+
+---
+
+### Step 2: Proximity Filter (Hard Constraint)
+
+Only vendors within a walkable radius are considered.
+
+Default radius:
+
+* **500 meters** (configurable)
+
+Logic:
+
+* Distance calculated using stored latitude/longitude (Haversine)
+* Vendors outside radius are excluded
+
+This guarantees hyperlocal relevance.
+
+---
+
+### Step 3: Category Affinity (Soft Constraint)
+
+YumYum prefers **complementary categories**, not direct competitors.
+
+Examples:
+
+* Ice cream → café, bakery, dessert
+* Café → bakery, dessert
+* Bakery → café, dessert
+
+Rules:
+
+* Complementary vendors are ranked higher
+* If insufficient matches exist, category filtering is relaxed
+
+This preserves vendor trust while still avoiding empty states.
+
+---
+
+### Step 4: Update Eligibility Filter
+
+Only vendors with **active updates** are eligible.
+
+Active update criteria:
+
+* `now() between starts_at and expires_at`
+* Maximum 3 updates per vendor
+
+Stale or inactive vendors are never shown.
+
+---
+
+### Step 5: Popularity & Freshness Scoring
+
+Eligible updates are ranked using a simple, explainable formula:
+
+```
+score =
+  (interest_count * 2)
++ (update_clicks_last_24h * 1)
++ (recency_boost)
+```
+
+Where:
+
+* `interest_count` = bounded multi-tap intent
+* `update_clicks_last_24h` = engagement signal
+* `recency_boost` = +3 if created within last 6–12 hours
+
+No machine learning. No black boxes.
+
+---
+
+### Step 6: Final Selection
+
+* Top **3 scoring updates** are selected
+* Only one update per vendor is shown
+* The same vendor never appears twice in secondary rings
+
+This ensures diversity and fairness.
+
+---
+
+## What Customers See vs What the System Uses
+
+### Customers See:
+
+* Visual rings
+* Subtle labels like “Popular nearby” or “Happening today”
+* No numbers, no rankings, no leaderboards
+
+### System Uses:
+
+* Exact counts and scores
+* Historical engagement data
+* Time decay
+
+This separation avoids gaming and comparison anxiety.
+
+---
+
+## Guardrails (Intentional Limits)
+
+The following are explicitly disallowed:
+
+* Global feeds
+* Infinite scrolling
+* Price-based ranking
+* Ratings or reviews in discovery
+* Showing competitor menus directly
+
+These guardrails preserve YumYum’s vendor-first positioning.
+
+---
+
+## Why This Works (Design Rationale)
+
+* Customers feel local vibrancy without being overwhelmed
+* Vendors gain exposure without losing their own customers
+* Discovery emerges organically from real behavior
+
+This turns YumYum from a static menu into a **living local surface**.
+
+---
+
+**Summary:**
+
+Other vendor updates are selected using **proximity, relevance, activity, and real intent signals**, applied conservatively to maximize delight while protecting conversion.
+
+---
+
+### X-Factor 6: Campaigns Without Owning Customer Data
+
+YumYum does **not** send messages to customers.
+
+Instead, YumYum enables marketing through:
+
+* Menu-based campaigns (specials, banners)
+* Suggested WhatsApp message templates for vendors
+* In-menu prompts and highlights
+
+This preserves trust while still enabling repeat engagement.
+
+---
+
+## Customer Data & Feedback (Ethical + Monetizable)
+
+**Principle:** YumYum never sells or exposes raw customer contact data.
+
+### Feedback System
+
+* Customers can submit feedback inside YumYum
+* Free tier: feedback count + sentiment summary
+* Paid Insights tier: full feedback text + response tools
+
+---
+
+## Final Founder Positioning
+
+> YumYum does not own customers.
+> YumYum owns **the moment of intent**.
+
+By capturing intent intensity, shaping attention, and proving value with numbers, YumYum becomes indispensable to hyperlocal food vendors.
+
+---
+
+**Status:** Finalized. Ready for execution, validation, and revenue.
