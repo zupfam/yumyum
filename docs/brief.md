@@ -94,11 +94,13 @@ No complex POS. No payments (yet). No bloated dashboards.
 
 ### The One Metric That Decides Everything
 
-> **Orders Sent to WhatsApp per Vendor per Day**
+> **Menus scanned per Vendor per Day**
 
-* > 5/day → Strong signal
-* 1–4/day → Needs optimization
-* <1/day → Value proposition broken
+_must be configurable in the app_
+
+* > 10/day → Strong signal
+* 1–5/day → Needs optimization
+* < 1/day → Value proposition broken
 
 ---
 
@@ -384,13 +386,13 @@ Purpose: **Truth, not motivation**.
 
 Derived Metrics:
 
-* Active Vendors (7-day `order_click`)
+* Active Vendors (7-day metric aggregated dashboard)
 * Avg Orders / Vendor / Day
 * Retention Proxy (vendors with activity after 15 days)
 * Vendor Segmentation:
-
-  * Power: ≥5 orders/day
-  * Weak: 1–4 orders/day
+_easily customizable in the app_
+  * Power: ≥10 orders/day
+  * Weak: 1–5 orders/day
   * Bad: <1 order/day
 
 ---
