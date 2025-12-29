@@ -10,9 +10,9 @@ workflow_path: {project-root}/_bmad/bmm/workflows/workflow-status/paths/method-g
 generated: 2025-12-23
 
 workflow_status:
-  product-brief: "{output_folder}/product-brief.md"
-  prd: required
-  create-ux-design: conditional
+  product-brief: "docs/brief.md"
+  prd: "docs/PRD.md"
+  create-ux-design: "docs/ux-design-specification.md"
   create-architecture: required
   create-epics-and-stories: required
   test-design: recommended
