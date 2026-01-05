@@ -213,25 +213,23 @@ Accessibility will be a core aspect of our visual foundation.
 
 ### Design Directions Explored
 
-Due to the limitation of not being able to generate interactive HTML visualizers directly, two distinct design directions were conceptually explored and described:
-1.  **"Vibrant & Playful Street Food Fest":** Emphasizing a lively, energetic atmosphere with warm, saturated colors, friendly typography, and responsive, slightly bouncy animations.
-2.  **"Clean & Modern Culinary Showcase":** Focusing on a sophisticated presentation of food with cooler, refined colors, sharp modern typography, and smooth, subtle transitions.
+The process involved exploring various conceptual themes and receiving direct feedback to refine the aesthetic for YumYum. Early attempts aimed at "Vibrant & Playful Street Food Fest" and "Clean & Modern Culinary Showcase," which laid groundwork for structure, but were ultimately deemed not distinctive enough.
 
 ### Chosen Direction
 
-Based on the project's vision of "Instagram for hyperlocal food" and the desire for "delight" and "excitement," the **"Vibrant & Playful Street Food Fest"** direction is recommended as the primary approach. It aligns strongly with the emotional goals of being appetite-stimulating, engaging, and accessible to a broad user base. While the "Clean & Modern Culinary Showcase" offers sophistication, the playful energy of the first option better captures the spirit of street food and resonates more closely with the "Instagram-style" inspiration.
+The chosen design direction is **"Saffron & Chili"**. This theme leverages a rich, premium red and a golden yellow as core colors, executed to evoke a truly "premium, fresh, and tasty" experience fitting for a food application. This selection directly responds to the need for a theme that is visually appealing, appetizing, and creates a strong "hook" for users.
 
 ### Design Rationale
 
-The "Vibrant & Playful Street Food Fest" direction is chosen for its strong alignment with the project's core identity. It leverages familiar social media aesthetics (like Instagram) but infuses them with a unique energy that evokes the joy and sensory richness of street food culture. This approach directly supports the emotional goals of delight, excitement, and approachability, making the product feel inviting and memorable.
+"Saffron & Chili" is chosen as the definitive theme due to its strong alignment with the core project requirements for a food app. It utilizes classic, appetite-stimulating colors (red and yellow) but applies them in a sophisticated, balanced manner to achieve a premium feel. The chosen palette creates high visual impact, makes food photography pop, and naturally conveys freshness and deliciousness, fulfilling the "tasty, fresh, premium, hooked" criteria provided.
 
 ### Implementation Approach
 
-The chosen design direction will be implemented using the defined Composable, Utility-First Design System.
-*   **Color Palette:** A custom palette will be derived, focusing on a vibrant primary color (e.g., a rich, warm orange or red) balanced with playful secondary accents and clean neutrals, all ensuring WCAG AA contrast compliance.
-*   **Typography:** Friendly, modern sans-serif fonts will be selected, with a clear hierarchy to guide the user's eye, enhancing readability while maintaining the playful tone.
-*   **Animations:** Magic UI and Aceternity UI components will be utilized to create expressive, responsive, and delightful micro-interactions and transitions that reinforce the playful energy without overwhelming the user.
-*   **Imagery:** High-quality, engaging food photography and short video clips will be paramount, presented in full-bleed layouts to maximize visual impact.
+The "Saffron & Chili" theme will be implemented using the defined Composable, Utility-First Design System.
+*   **Color Palette:** A custom palette featuring a rich, premium red as the primary color and a vibrant golden yellow as the secondary/accent color will be used, supported by clean, neutral backgrounds (deep charcoal for dark mode, airy off-white for light mode). All colors will ensure WCAG AA contrast compliance.
+*   **Typography:** Friendly, modern sans-serif fonts will be selected, with a clear hierarchy to guide the user's eye, enhancing readability while maintaining an inviting tone.
+*   **Animations:** Magic UI and Aceternity UI components will be utilized to create expressive, responsive, and delightful micro-interactions and transitions that enhance the user experience without overwhelming.
+*   **Imagery:** High-quality, engaging food photography and short video clips will be paramount, presented in full-bleed layouts to maximize visual impact and align with the appetizing theme.
 
 ## User Journey Flows
 

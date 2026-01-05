@@ -126,7 +126,6 @@ create table vendor_updates (
   media_url text,
   starts_at timestamptz default now(),
   expires_at timestamptz not null,
-  interest_count int default 0,
   created_at timestamptz default now()
 );
 ```
@@ -154,7 +153,7 @@ create table dishes (
   name text not null,
   description text,
   price numeric(10,2) not null,
-  instock text default 'yes',
+  is_available boolean default true,
   image_url text,
   created_at timestamptz default now()
 );
@@ -163,6 +162,20 @@ create table dishes (
 ### `menu_events` (Analytics – Single Event Stream)
 The core behavioral backbone of YumYum. All metrics and dashboards derive from this table.
 
+**Event Type Definition:**
+```sql
+create type menu_event_type as enum (
+  'menu_view',
+  'dish_view',
+  'add_to_cart',
+  'order_click',
+  'update_view',
+  'update_click',
+  'update_interest',
+  'feedback_submit'
+);
+```
+
 **Table Definition:**
 ```sql
 create table menu_events (
@@ -170,7 +183,7 @@ create table menu_events (
   vendor_id uuid not null,
   dish_id bigint null,
   update_id bigint null,
-  event text not null,
+  event menu_event_type not null,
   created_at timestamptz default now()
 );
 ```
