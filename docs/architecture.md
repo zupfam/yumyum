@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2, 3, 4]
+stepsCompleted: [1, 2, 3, 4, 5]
 inputDocuments:
   - docs/PRD.md
   - docs/ux-design-specification.md
@@ -295,6 +295,131 @@ Both frontend and backend development environments will offer a highly productiv
     *   **Rationale:** Beyond platform auto-scaling for the FastAPI backend on Render, explicitly fine-tuning Gunicorn worker configurations (number of workers, threads) provides granular control over resource utilization. This optimizes for cost-efficiency and performance based on application workload and Render instance types, which is a critical step to achieve the "scalable" and "money minting machine" goals by ensuring optimal resource usage. Database read replicas will be considered for future read-heavy workloads.
     *   **Affects:** FastAPI backend, Render deployment, cost, performance, scalability, overall application responsiveness under load.
     *   **Provided by Starter:** No (manual configuration/tuning).
+
+## Implementation Patterns & Consistency Rules
+
+### Pattern Categories Defined
+
+**Critical Conflict Points Identified:**
+20 areas where AI agents could make different choices, spanning naming, structure, format, communication, and process.
+
+### Naming Patterns
+
+**Database Naming Conventions:**
+*   **Table Naming:** Plural, snake_case (e.g., `vendors`, `dishes`, `menu_events`).
+*   **Column Naming:** Singular, snake_case (e.g., `vendor_id`, `product_name`).
+*   **Foreign Key Format:** `source_table_id` (e.g., `vendor_id` referencing `vendors.id`).
+*   **Index Naming:** `idx_{table_name}_{column_name}` (e.g., `idx_vendors_email`).
+
+**API Naming Conventions:**
+*   **REST Endpoint Naming:** Plural nouns for collections (`/vendors`, `/dishes`), kebab-case for specific resources (`/vendors/{vendor-slug}`).
+*   **Route Parameter Format:** Kebab-case in URL paths (e.g., `/vendors/{vendor-slug}`).
+*   **Query Parameter Naming:** camelCase (e.g., `pageNumber`, `pageSize`).
+*   **Header Naming Conventions:** Standard HTTP headers; custom headers should use `X-` prefix (e.g., `X-Request-Id`).
+
+**Code Naming Conventions:**
+*   **React Components:** PascalCase (e.g., `VendorCard`, `MenuButton`).
+*   **React Hooks:** `use` prefix, camelCase (e.g., `useVendorData`).
+*   **File Naming:** Kebab-case for directories and component files (`vendor-card/index.tsx`, `menu-button.tsx`). Python modules `snake_case` (`my_service.py`).
+*   **Python Functions/Variables:** snake_case (e.g., `get_user_data`, `process_order`).
+*   **TypeScript Variables/Functions:** camelCase (e.g., `getDishData`, `processOrder`).
+
+### Structure Patterns
+
+**Project Organization:**
+*   **Testing:** Co-located with code for unit/integration tests (`*.test.ts`, `test_*.py`). Dedicated `tests/e2e` directory for end-to-end tests.
+*   **Frontend Components:** Hybrid Component Architecture: Atomic Design (atoms, molecules, organisms) for UI elements, Feature-Sliced Design for higher-level features/pages.
+*   **Shared Utilities:** Frontend `src/lib/` or `src/utils/` for shared TypeScript utilities. Backend `app/core/utils/` or `app/services/` for Python helpers.
+*   **Services/Repositories (Backend):** Organized within a `services/` directory, with sub-directories per domain (e.g., `app/services/vendors/`, `app/services/dishes/`).
+
+**File Structure Patterns:**
+*   **Config Files:** Top-level project configs in root (e.g., `package.json`, `tailwind.config.js`, `Dockerfile`, `render.yaml`, `pyproject.toml`). Module-specific configurations within their respective module directories (e.g., `backend/app/config/`).
+*   **Static Assets:** `public/` directory in the Next.js frontend for static files (e.g., `public/images`, `public/icons`). All dynamic media handled by Cloudinary.
+*   **Documentation:** `docs/` directory for architectural documents, PRDs, UX specs. In-code documentation (JSDoc/TSDoc for TypeScript, docstrings for Python).
+*   **Environment Files:** `.env.local`, `.env.development`, `.env.production` for Next.js; `.env` for FastAPI backend, managed securely via Vercel/Render platform secrets.
+
+### Format Patterns
+
+**API Response Formats:**
+*   **Success Responses:** Standard JSON wrapper `{"data": ...}` for single resources or collections.
+*   **Error Responses:** Standardized custom error format: `{"code": "STRING_ERROR_CODE", "message": "Human-readable description of the error", "details": {"field_name": "Specific error detail for field"}}`.
+*   **Date/Time Formats:** ISO 8601 strings (e.g., `YYYY-MM-DDTHH:MM:SSZ`) for all API communication and database storage. Frontend responsible for display formatting.
+*   **Success Status Codes:** Adhere to standard HTTP status codes (e.g., 200 OK, 201 Created, 204 No Content).
+
+**Data Exchange Formats:**
+*   **JSON Field Naming:** `camelCase` for frontend (TypeScript/JavaScript), `snake_case` for backend (Python) and API requests/responses. Pydantic aliases will be used in FastAPI models for automatic conversion between `camelCase` (JSON) and `snake_case` (Python/Database).
+*   **Boolean Representations:** `true`/`false` in JSON.
+*   **Null Handling:** Explicit `null` for absent or empty values where applicable.
+*   **Array vs. Object:** Use arrays for collections, objects for key-value pairs.
+
+### Communication Patterns
+
+**Event System Patterns:**
+*   **Event Naming:** Kebab-case, domain-driven (e.g., `user.created`, `order.placed`, `dish.updated`).
+*   **Event Payload Structures:** Clearly defined using Pydantic models (Python) and TypeScript interfaces, ensuring type safety and consistency.
+*   **Event Versioning:** Implicitly handled by schema changes for now, explicit versioning (e.g., `v1.user.created`) can be introduced if schema changes frequently.
+*   **Async Event Handling:** Use background tasks in FastAPI for non-blocking event processing.
+
+**State Management Patterns:**
+*   **State Updates (Zustand):** Immutable updates are mandatory. All state modifications must create new state objects.
+*   **Action Naming (Zustand):** `verbNoun` for clarity (e.g., `addDishToCart`, `updateVendorProfile`).
+*   **Selector Patterns (Zustand):** Use selectors to derive data from the store, minimizing re-renders.
+*   **State Organization:** Organize Zustand stores by feature or domain to maintain modularity.
+
+### Process Patterns
+
+**Error Handling Patterns:**
+*   **Global Error Handling:** Custom exception handlers in FastAPI for API-wide error responses. React Error Boundaries for frontend component-level error catching.
+*   **User-facing Error Messages:** Clear, concise, and actionable messages. Avoid technical jargon.
+*   **Logging vs. User Error:** Distinguish between errors that require user intervention (e.g., validation errors) and internal system errors (which should be logged and not exposed to users).
+*   **Backend Error Propagation:** Errors should be caught and transformed into our standard error response format before being sent to the client.
+
+**Loading State Patterns:**
+*   **Loading State Indicators:** Consistent use of skeleton loaders for data fetching and subtle spinners for interactive element loading.
+*   **Loading State Naming:** Clear and consistent naming for loading state variables (e.g., `isLoading`, `isSubmitting`).
+*   **Loading State Persistence:** Implement global loading contexts for full-page transitions and local component-specific loading states.
+*   **UI Feedback:** Ensure all asynchronous operations provide clear visual feedback to the user about their pending status.
+
+### Enforcement Guidelines
+
+**All AI Agents MUST:**
+*   Strictly adhere to all naming conventions (database, API, code, files).
+*   Follow the defined component architecture (Atomic Design + Feature-Sliced).
+*   Utilize the specified API response and error formats.
+*   Implement immutable state updates for frontend state management.
+*   Prioritize Next.js built-in optimizations and advanced React performance patterns.
+*   Ensure all backend logs are structured (JSON) and use consistent logging levels.
+*   Integrate Sentry for error tracking.
+*   Implement fine-tuned Gunicorn worker configurations for FastAPI.
+
+**Pattern Enforcement:**
+*   **Code Reviews:** Manual code reviews (if human agents are involved) and automated linters/formatters will enforce adherence.
+*   **Automated Checks:** Implement custom ESLint rules or Python linters where standard tools don't cover a specific pattern.
+*   **Documentation:** Patterns will be explicitly documented here and referenced in code/pull requests.
+*   **Process for Updating Patterns:** Any changes to patterns must be proposed, reviewed, and approved by the architect before being updated in this document.
+
+### Pattern Examples
+
+**Good Examples:**
+```typescript
+// Frontend Component (Hybrid Architecture)
+// atoms/Button.tsx
+// molecules/LoginForm.tsx
+// features/auth/components/LoginPage.tsx
+// src/features/vendors/pages/VendorDashboard.tsx
+
+// Backend API Endpoint
+// GET /api/v1/dishes
+// POST /api/v1/dishes/{dish_id}/add-to-cart
+```
+
+**Anti-Patterns:**
+*   Inconsistent naming (e.g., `userId` in one place, `user_id` in another).
+*   Direct state mutation in Zustand.
+*   Generic error messages like "An error occurred."
+*   Lack of loading states for async operations.
+*   Direct SQL queries in FastAPI handlers instead of using SQLModel.
+
 
 
 
