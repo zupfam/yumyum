@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2, 3]
+stepsCompleted: [1, 2, 3, 4]
 inputDocuments:
   - docs/PRD.md
   - docs/ux-design-specification.md
@@ -263,6 +263,42 @@ Both frontend and backend development environments will offer a highly productiv
     *   **Rationale:** Provides application-level rate limiting with fine-grained control, allowing for strategies based on IP, user, or custom keys. It's easily integrated into the FastAPI application and can be scaled with a Redis backend if distributed rate limiting is required in the future, effectively protecting the API from abuse and ensuring fair usage.
     *   **Affects:** FastAPI backend, API security, performance, user experience.
     *   **Provided by Starter:** No (manual integration).
+
+### Frontend Architecture
+
+*   **Decision:** Component Architecture
+    *   **Choice:** Hybrid Component Architecture (Atomic Design + Feature-Sliced Design)
+    *   **Version:** N/A
+    *   **Rationale:** This approach combines Atomic Design principles for structuring reusable UI components (atoms, molecules, organisms) with Feature-Sliced Design for organizing higher-level application logic (templates, pages, and feature modules). This balances a consistent design system with strong modularity and scalability, crucial for "rich frontend designs," maintainable code, and effective collaboration among AI agents on a growing project.
+    *   **Affects:** Next.js frontend, component reusability, code organization, development workflow, scalability.
+    *   **Provided by Starter:** No (manual implementation).
+
+*   **Decision:** Frontend Performance Optimization
+    *   **Choice:** Layered Frontend Performance Optimization
+    *   **Version:** N/A (combination of techniques)
+    *   **Rationale:** This strategy combines Next.js's built-in optimizations (code splitting, image/font optimization) and efficient asset delivery (Vercel CDN, Cloudinary) with advanced React performance patterns like component virtualization for long lists and strategic memoization. Additionally, using a dedicated client-side data fetching library (e.g., React Query or SWR) will optimize API interactions and client-side caching, significantly enhancing perceived performance and user experience, especially with rich frontend designs and a focus on "fast" user experience.
+    *   **Affects:** Next.js frontend, user experience, perceived speed, API load, overall application responsiveness.
+    *   **Provided by Starter:** No (manual implementation).
+
+### Infrastructure & Deployment
+
+*   **Decision:** Monitoring and Logging
+    *   **Choice:** Layered Monitoring and Logging Strategy (Centralized Logging + Sentry)
+    *   **Version:** N/A (combination of services/tools)
+    *   **Rationale:** This strategy combines centralized logging (leveraging built-in capabilities of Vercel and Render) for comprehensive log aggregation and analysis with Sentry for application performance monitoring (APM) and error tracking. This provides a balanced approach to observability, enabling proactive error detection, performance bottleneck identification, and efficient debugging, crucial for a "scalable" and "maintainable" application. Future enhancements could include Prometheus/Grafana for more advanced metrics.
+    *   **Affects:** All application components, operational visibility, debugging, performance, security.
+    *   **Provided by Starter:** No (manual setup/integration).
+
+*   **Decision:** Scaling Strategy
+    *   **Choice:** Fine-tuned FastAPI Scaling (Gunicorn/Uvicorn)
+    *   **Version:** N/A (configuration choice)
+    *   **Rationale:** Beyond platform auto-scaling for the FastAPI backend on Render, explicitly fine-tuning Gunicorn worker configurations (number of workers, threads) provides granular control over resource utilization. This optimizes for cost-efficiency and performance based on application workload and Render instance types, which is a critical step to achieve the "scalable" and "money minting machine" goals by ensuring optimal resource usage. Database read replicas will be considered for future read-heavy workloads.
+    *   **Affects:** FastAPI backend, Render deployment, cost, performance, scalability, overall application responsiveness under load.
+    *   **Provided by Starter:** No (manual configuration/tuning).
+
+
+
+
 
 
 
