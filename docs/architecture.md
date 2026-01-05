@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2, 3, 4, 5]
+stepsCompleted: [1, 2, 3, 4, 5, 6]
 inputDocuments:
   - docs/PRD.md
   - docs/ux-design-specification.md
@@ -419,6 +419,335 @@ Both frontend and backend development environments will offer a highly productiv
 *   Generic error messages like "An error occurred."
 *   Lack of loading states for async operations.
 *   Direct SQL queries in FastAPI handlers instead of using SQLModel.
+
+## Project Structure & Boundaries
+
+### Complete Project Directory Structure
+
+```
+yumyum/
+├── .env.local.example             # Example environment variables for local development
+├── .gitignore                     # Git ignore rules
+├── README.md                      # Project overview and instructions
+├── package.json                   # Monorepo scripts and common dev dependencies
+├── tsconfig.json                  # Monorepo root TypeScript configuration
+├── frontend/                      # Next.js client-side static frontend
+│   ├── package.json               # Frontend dependencies and scripts
+│   ├── next.config.js             # Next.js configuration
+│   ├── tailwind.config.js         # Tailwind CSS configuration
+│   ├── tsconfig.json              # Frontend TypeScript configuration
+│   ├── .env.local                 # Local environment variables for frontend
+│   ├── .env.example               # Example env variables for frontend
+│   ├── src/                       # Frontend source code
+│   │   ├── app/                   # Next.js App Router (or `pages/` for Pages Router)
+│   │   │   ├── globals.css        # Global CSS styles (Tailwind base, components, utilities)
+│   │   │   ├── layout.tsx         # Root layout component
+│   │   │   └── page.tsx           # Example root page
+│   │   ├── components/            # Reusable UI components (Atomic Design principles)
+│   │   │   ├── atoms/             # Basic HTML elements styled (Button, Input, Icon)
+│   │   │   ├── molecules/         # Simple groups of atoms (LoginForm, SearchBar)
+│   │   │   ├── organisms/         # Complex groups of molecules/atoms (Header, Footer)
+│   │   │   └── ui/                # Shadcn UI components (copied into project)
+│   │   ├── features/              # Feature-Sliced Design for distinct business features
+│   │   │   ├── auth/              # Authentication-related components, hooks, pages
+│   │   │   │   ├── components/
+│   │   │   │   └── pages/
+│   │   │   ├── vendors/           # Vendor-specific components, pages, logic
+│   │   │   │   ├── components/
+│   │   │   │   └── pages/
+│   │   │   ├── menu/              # Menu display and interaction logic
+│   │   │   │   ├── components/
+│   │   │   │   └── pages/
+│   │   │   └── cart/              # Cart management logic and UI
+│   │   │       ├── components/
+│   │   │       └── hooks/
+│   │   ├── lib/                   # Shared utilities, API clients, hooks, Zustand stores
+│   │   │   ├── api/               # API client for FastAPI backend
+│   │   │   ├── hooks/             # Custom React hooks (e.g., useAuth, useCart)
+│   │   │   ├── stores/            # Zustand stores (e.g., authStore, cartStore)
+│   │   │   ├── utils/             # General utility functions
+│   │   │   └── services/          # Client-side services (e.g., data fetching wrappers)
+│   │   ├── types/                 # Global TypeScript type definitions
+│   │   └── middleware.ts          # Next.js middleware
+│   ├── public/                    # Static assets served directly
+│   │   └── assets/                # Local images, icons (dynamic media handled by Cloudinary)
+│   └── tests/                     # Frontend tests
+│       ├── unit/                  # Unit tests for components, hooks, utils
+│       ├── integration/           # Integration tests for feature modules
+│       └── e2e/                   # End-to-end tests (e.g., Playwright or Cypress)
+├── backend/                       # Python FastAPI API backend
+│   ├── Dockerfile                 # Docker configuration for FastAPI application
+│   ├── requirements.txt           # Python dependencies
+│   ├── main.py                    # FastAPI application entry point
+│   ├── .env                       # Local environment variables for backend
+│   ├── .env.example               # Example env variables for backend
+│   ├── render.yaml                # Render deployment configuration
+│   ├── app/                       # FastAPI application source code
+│   │   ├── __init__.py            # Python package initialization
+│   │   ├── core/                  # Core configurations, utilities, and infrastructure
+│   │   │   ├── config.py          # Application settings (Pydantic BaseSettings)
+│   │   │   ├── db.py              # Database connection, SQLModel engine, session management
+│   │   │   ├── security.py        # Authentication/authorization utilities, token handling, encryption
+│   │   │   ├── middleware.py      # Custom FastAPI middleware (e.g., logging, CORS)
+│   │   │   └── exceptions.py      # Custom exception handlers for consistent API errors
+│   │   ├── api/                   # API routers and endpoints
+│   │   │   ├── v1/                # Version 1 of the API
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── endpoints/     # FastAPI route handlers (CRUD operations for resources)
+│   │   │   │   │   ├── vendors.py
+│   │   │   │   │   ├── dishes.py
+│   │   │   │   │   ├── auth.py
+│   │   │   │   │   └── events.py  # Endpoints for receiving and processing menu_events
+│   │   │   │   └── dependencies.py# FastAPI dependencies (e.g., auth checks, RLS context)
+│   │   ├── schemas/               # Pydantic models for API request/response validation
+│   │   │   ├── vendors.py
+│   │   │   ├── dishes.py
+│   │   │   ├── auth.py
+│   │   │   └── events.py
+│   │   ├── crud/                  # Create, Read, Update, Delete operations (database interactions)
+│   │   │   ├── vendors.py
+│   │   │   ├── dishes.py
+│   │   │   └── events.py
+│   │   ├── models/                # SQLModel database models
+│   │   │   ├── __init__.py
+│   │   │   ├── vendors.py
+│   │   │   ├── dishes.py
+│   │   │   ├── updates.py         # For vendor_updates, update_interactions
+│   │   │   └── events.py
+│   │   ├── services/              # Business logic layer
+│   │   │   ├── vendors.py
+│   │   │   ├── dishes.py
+│   │   │   └── auth.py
+│   │   └── tests/                 # Backend tests
+│   │       ├── unit/
+│   │       ├── integration/
+│   │       └── e2e/
+│   └── supabase/                  # Supabase-related files
+│       └── migrations/            # Direct SQL migration scripts
+│           └── 2026_01_06_initial_schema.sql # Example migration file
+└── docs/                          # Project documentation (PRD, UX, Architecture, etc.)
+```
+
+### Architectural Boundaries
+
+**API Boundaries:**
+*   **External API Endpoints:** The FastAPI backend exposes a well-defined RESTful HTTP API (e.g., `/api/v1/`) that serves as the primary communication interface for the Next.js frontend and any other potential external consumers.
+*   **Internal Service Boundaries:** Within the FastAPI application, clear boundaries exist between API endpoints (routers), business logic (services), and data access (CRUD operations/SQLModel models). Communication between these layers is via explicit Python function calls and Pydantic models.
+*   **Authentication and Authorization Boundaries:** Supabase Auth is the primary authentication provider, with FastAPI dependencies handling JWT token validation. Application-level authorization is enforced in FastAPI services, complemented by Supabase RLS policies acting as a database-level security boundary.
+*   **Data Access Layer Boundaries:** SQLModel models and CRUD operations form a distinct data access layer within FastAPI, abstracting direct SQL interaction from the business logic services.
+
+**Component Boundaries (Frontend - Next.js):**
+*   **Communication Patterns:** Parent-child component communication primarily uses React props. Global state management is handled by Zustand stores. React Context may be used for local or thematic state that is shared deeply within a component subtree.
+*   **State Management Boundaries:** Zustand stores are globally accessible but logically scoped per domain/feature. Local component state is managed with React's `useState` or `useReducer` hooks.
+*   **Service Communication Patterns:** Client-side data fetching libraries (e.g., React Query or SWR) manage interactions with the FastAPI backend, providing caching, revalidation, and error handling for API calls.
+
+**Data Boundaries:**
+*   **Database Schema Boundaries:** Explicitly defined by the SQLModel models in the FastAPI backend and the PostgreSQL schema in Supabase (`GEMINI.md`).
+*   **Data Access Patterns:** FastAPI services interact with the database primarily through SQLModel via CRUD operations. Direct SQL through Supabase client may be used for complex analytics or database functions.
+*   **Caching Boundaries:** Layered caching strategy with Next.js/Vercel CDN for static assets, Cloudinary CDN for media, in-memory caching in FastAPI, and Supabase (PostgreSQL) features for materialized views.
+
+### Requirements to Structure Mapping
+
+**Feature/Epic Mapping:**
+*   **Digital Storefront & Dynamic Menu:**
+    *   Frontend: `frontend/src/features/vendors/`, `frontend/src/features/menu/`, `frontend/src/components/` (atoms, molecules, organisms for UI elements).
+    *   Backend: `backend/app/api/v1/endpoints/vendors.py`, `backend/app/api/v1/endpoints/dishes.py`, `backend/app/schemas/vendors.py`, `backend/app/schemas/dishes.py`, `backend/app/crud/vendors.py`, `backend/app/crud/dishes.py`, `backend/app/models/vendors.py`, `backend/app/models/dishes.py`, `backend/app/models/updates.py`.
+*   **Ordering (Client-Side Cart & WhatsApp Flow):**
+    *   Frontend: `frontend/src/features/cart/`, `frontend/src/lib/stores/cartStore.ts`.
+    *   Backend: `backend/app/api/v1/endpoints/orders.py`, `backend/app/schemas/orders.py`, `backend/app/crud/orders.py`, `backend/app/models/orders.py`, `backend/app/services/orders.py`.
+*   **Vendor Dashboard:**
+    *   Frontend: `frontend/src/features/dashboard/`, `frontend/src/components/dashboard/`.
+    *   Backend: `backend/app/api/v1/endpoints/analytics.py` (for menu_events aggregation), `backend/app/services/analytics.py`, `backend/app/models/events.py`.
+*   **Authentication (Secure Vendor Login):**
+    *   Frontend: `frontend/src/features/auth/`, `frontend/src/lib/auth/`.
+    *   Backend: `backend/app/api/v1/endpoints/auth.py`, `backend/app/core/security.py`, `backend/app/services/auth.py`, `backend/app/schemas/auth.py`.
+
+**Cross-Cutting Concerns:**
+*   **Security:**
+    *   Backend: `backend/app/core/security.py` (for token handling, encryption), `backend/app/core/middleware.py` (for CORS, HTTPS redirect), FastAPI dependencies (`backend/app/api/v1/dependencies.py`). Supabase RLS policies (in `backend/supabase/migrations/`).
+    *   Frontend: `frontend/src/lib/auth/`, secure storage for tokens.
+*   **Performance:**
+    *   Frontend: `next.config.js` (image optimization), `frontend/src/lib/utils/performance.ts` (e.g., virtualization, memoization hooks), client-side data fetching library configuration.
+    *   Backend: `backend/app/core/config.py` (for Gunicorn/Uvicorn worker config), caching implementation within `backend/app/services/` or middleware.
+*   **Observability (Monitoring/Logging):**
+    *   Backend: `backend/app/core/logging.py`, Sentry integration.
+    *   Frontend: Sentry integration, usage of platform-specific logging.
+*   **Data Integrity/Validation:**
+    *   Backend: Pydantic schemas in `backend/app/schemas/`, SQLModel models in `backend/app/models/`, `backend/app/core/exceptions.py`. Frontend validation for user input.
+
+### Integration Points
+
+**Internal Communication:**
+*   **Frontend Components:** Props for parent-child, Zustand for shared state, React Context for local sub-tree state.
+*   **Backend Services:** Python function calls, dependency injection within FastAPI.
+
+**External Integrations:**
+*   **FastAPI Backend <-> Supabase:** Supabase client library/SDK, direct SQL queries for migrations.
+*   **FastAPI Backend <-> Cloudinary:** Cloudinary Python SDK for media uploads/management.
+*   **Next.js Frontend <-> FastAPI Backend:** HTTP/REST API calls using a client-side data fetching library (e.g., React Query or SWR).
+*   **Next.js Frontend <-> Supabase (direct for Auth):** Supabase JavaScript SDK for client-side authentication flows.
+*   **Next.js Frontend <-> Cloudinary:** Direct use of Cloudinary URLs for displaying media, potentially client-side SDK for direct uploads.
+*   **WhatsApp:** Deep linking via frontend.
+
+### File Organization Patterns
+
+**Configuration Files:**
+*   Root: `package.json`, `tsconfig.json`, `.env.local.example`, `.gitignore`.
+*   Frontend: `frontend/package.json`, `frontend/next.config.js`, `frontend/tailwind.config.js`, `frontend/tsconfig.json`, `frontend/.env.local`, `frontend/.env.example`.
+*   Backend: `backend/requirements.txt`, `backend/.env`, `backend/.env.example`, `backend/Dockerfile`, `backend/render.yaml`, `backend/app/core/config.py`.
+
+**Source Organization:**
+*   Frontend: `frontend/src/` (organized by App Router / `pages`, then `components`, `features`, `lib`, `types`).
+*   Backend: `backend/app/` (organized by `core`, `api`, `schemas`, `crud`, `models`, `services`, `tests`).
+
+**Test Organization:**
+*   Frontend: `frontend/tests/` (with `unit`, `integration`, `e2e` subdirectories), or co-located `*.test.ts` within `src/`.
+*   Backend: `backend/app/tests/` (with `unit`, `integration`, `e2e` subdirectories).
+
+**Asset Organization:**
+*   Frontend `public/` for static assets.
+*   Cloudinary for all dynamic images/videos.
+
+### Development Workflow Integration
+
+**Development Server Structure:**
+*   Frontend: `npm run dev` in `frontend/` (Next.js development server).
+*   Backend: `uvicorn main:app --reload` from `backend/` (FastAPI development server).
+*   Monorepo `package.json` scripts for parallel execution (e.g., `npm run dev:all`).
+
+**Build Process Structure:**
+*   Frontend: `npm run build` in `frontend/` (Next.js production build).
+*   Backend: `docker build -t yumyum-backend .` from `backend/` (Docker multi-stage build).
+*   Monorepo `package.json` scripts for coordinated builds.
+
+**Deployment Structure:**
+*   Frontend: Vercel CLI / GitHub integration.
+*   Backend: Render CLI / GitHub integration (`render.yaml`).
+
+## Architecture Validation Results
+
+### Coherence Validation ✅
+
+**Decision Compatibility:**
+All technology choices (Next.js, FastAPI, Supabase, Cloudinary, Vercel, Render) are highly compatible, cloud-native friendly, and integrate seamlessly within the proposed monorepo structure. Specific tool versions identified (SQLModel `0.0.31`, FastAPI-Limiter `0.1.6`) are current stable releases. No contradictory decisions were identified; all architectural choices consistently support the overarching project goals of performance, scalability, and maintainability.
+
+**Pattern Consistency:**
+Implementation patterns (naming, structural, format, communication, process) are directly aligned with and support the architectural decisions. For example, the Hybrid Authorization pattern aligns perfectly with the chosen technologies (Supabase RLS + FastAPI logic), and the Layered Caching Strategy integrates with FastAPI, Supabase, and CDN capabilities.
+
+**Structure Alignment:**
+The defined monorepo project structure (separate `frontend/` and `backend/` directories) robustly supports all architectural decisions and chosen patterns. Clear boundaries (API, component, service, data) are established and respected, ensuring modularity. Integration points are explicitly defined within the structure, facilitating seamless communication between components and external services.
+
+### Requirements Coverage Validation ✅
+
+**Epic/Feature Coverage:**
+While no formal epics were provided, all functional requirement categories identified (Digital storefront, Dynamic menu, Ordering, Vendor dashboard, Authentication) are explicitly mapped to specific architectural components, API endpoints, and database models within the defined project structure. This ensures every core feature has clear architectural support.
+
+**Functional Requirements Coverage:**
+All functional requirements derived from the PRD are fully supported by the architectural decisions. The chosen technologies and patterns provide the necessary capabilities for implementing the dynamic menu, client-side cart, WhatsApp ordering flow, vendor dashboard, and secure authentication.
+
+**Non-Functional Requirements Coverage:**
+All critical non-functional requirements are robustly addressed:
+*   **Performance:** Covered by Next.js static generation, Layered Frontend Performance Optimization, Layered Caching, Fine-tuned FastAPI Scaling, and Cloudinary CDN.
+*   **Scalability:** Achieved through the decoupled architecture, platform auto-scaling, optimized FastAPI configuration, and Supabase managed scaling/future read replica options.
+*   **Cost Efficiency:** Supported by leveraging BaaS (Supabase) and platform starter tiers (Vercel/Render).
+*   **Security:** Covered by Supabase Magic Link, Hybrid Authorization (RLS + FastAPI), Built-in FastAPI Middleware, Application-level Encryption, FastAPI-Limiter.
+*   **Maintainability:** Enhanced by modular design, SQLModel, Supabase migrations, consistent patterns, error handling standards, centralized logging.
+*   **Usability/UX:** Supported by rich frontend stack, Hybrid Component Architecture, and aggressive performance optimizations.
+*   **Data Integrity:** Ensured by SQLModel, Pydantic validation, Supabase Migrations, and database constraints.
+
+### Implementation Readiness Validation ✅
+
+**Decision Completeness:**
+All critical decisions have been documented, including chosen technologies, specific versions (where applicable), and clear rationales. These decisions provide a solid foundation for implementation.
+
+**Structure Completeness:**
+The project structure is detailed and specific, defining directories and file organization for both frontend and backend. Integration points, architectural boundaries, and requirements mapping are explicitly laid out.
+
+**Pattern Completeness:**
+A comprehensive set of implementation patterns and consistency rules has been defined across naming, structure, format, communication, and process. These patterns include concrete examples and anti-patterns to guide AI agents effectively.
+
+### Gap Analysis Results
+
+*   **Critical Gaps:** None identified. The architecture is complete and ready for implementation.
+*   **Important Gaps:**
+    *   Specific Python cryptography library for application-level encryption needs to be selected and integrated.
+    *   Detailed configuration parameters for Gunicorn workers on Render will require fine-tuning based on actual workload and instance types.
+    *   Specific client-side data fetching library (React Query vs. SWR) for frontend performance optimization needs a final decision.
+    *   Detailed Sentry integration strategy (e.g., error reporting for frontend/backend, custom tags) needs to be defined during implementation setup.
+*   **Nice-to-Have Gaps:**
+    *   Additional concrete examples for some complex patterns (e.g., advanced authorization scenarios).
+    *   Formal documentation of the process for updating architectural patterns.
+    *   Tooling recommendations for code quality (e.g., code coverage, vulnerability scanning) beyond linters/formatters.
+    *   A defined performance testing strategy.
+
+### Validation Issues Addressed
+
+No critical issues were found that block implementation. The identified "Important Gaps" are considered actionable items for the initial implementation phase, representing areas for further refinement rather than architectural blockers.
+
+### Architecture Completeness Checklist
+
+**✅ Requirements Analysis**
+
+- [x] Project context thoroughly analyzed
+- [x] Scale and complexity assessed
+- [x] Technical constraints identified
+- [x] Cross-cutting concerns mapped
+
+**✅ Architectural Decisions**
+
+- [x] Critical decisions documented with versions
+- [x] Technology stack fully specified
+- [x] Integration patterns defined
+- [x] Performance considerations addressed
+
+**✅ Implementation Patterns**
+
+- [x] Naming conventions established
+- [x] Structure patterns defined
+- [x] Communication patterns specified
+- [x] Process patterns documented
+
+**✅ Project Structure**
+
+- [x] Complete directory structure defined
+- [x] Component boundaries established
+- [x] Integration points mapped
+- [x] Requirements to structure mapping complete
+
+### Architecture Readiness Assessment
+
+**Overall Status:** READY FOR IMPLEMENTATION
+
+**Confidence Level:** High, given the comprehensive, collaborative approach and the robust, modern technology stack chosen.
+
+**Key Strengths:**
+*   **Strong Performance Foundation:** Next.js static generation, FastAPI async capabilities, layered caching, and Cloudinary CDN ensure a fast user experience.
+*   **Scalable and Modular Design:** Decoupled frontend/backend, hybrid component architecture, and layered backend services promote easy scaling and maintainability.
+*   **Robust Security:** Defense-in-depth with Supabase RLS, FastAPI authorization, and application-level encryption.
+*   **Clear Guidance for AI Agents:** Detailed decisions, patterns, and structure provide unambiguous instructions for consistent implementation.
+*   **Cost-Efficient Leveraging of BaaS/PaaS:** Maximizes value from Supabase, Vercel, and Render.
+
+**Areas for Future Enhancement:**
+*   Formalization of key management for application-level encryption.
+*   Introduction of Redis for advanced distributed caching as load increases.
+*   Implementation of advanced performance monitoring beyond Sentry (e.g., Prometheus/Grafana) for deeper insights into system metrics.
+*   Exploring GraphQL for API flexibility if frontend data fetching patterns become highly complex.
+
+### Implementation Handoff
+
+**AI Agent Guidelines:**
+
+- Follow all architectural decisions exactly as documented in this `docs/architecture.md` file.
+- Use implementation patterns consistently across all components.
+- Respect project structure and boundaries as defined.
+- Refer to this document for all architectural questions and clarifications.
+
+**First Implementation Priority:**
+Project initialization:
+*   Frontend: `npx create-next-app@latest frontend --typescript --tailwind --eslint`
+*   Backend: Set up Dockerized FastAPI application (with `main.py`, `requirements.txt`)
+
+
 
 
 
