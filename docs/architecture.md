@@ -257,6 +257,14 @@ Both frontend and backend development environments will offer a highly productiv
     *   **Affects:** FastAPI backend, API consumers, error logging, user experience.
     *   **Provided by Starter:** No (manual implementation).
 
+*   **Decision:** Rate Limiting Strategy
+    *   **Choice:** FastAPI-Limiter
+    *   **Version:** `0.1.6`
+    *   **Rationale:** Provides application-level rate limiting with fine-grained control, allowing for strategies based on IP, user, or custom keys. It's easily integrated into the FastAPI application and can be scaled with a Redis backend if distributed rate limiting is required in the future, effectively protecting the API from abuse and ensuring fair usage.
+    *   **Affects:** FastAPI backend, API security, performance, user experience.
+    *   **Provided by Starter:** No (manual integration).
+
+
 
 
 
