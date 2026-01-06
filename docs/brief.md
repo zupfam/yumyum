@@ -12,7 +12,7 @@
 
 ---
 
-## The Analog Trap: Why Paper Menus Kill Growth
+## The Analog Trap: Why Paper Menus Hinder Growth
 
 Street food vendors are stuck in an analog loop that leaks money daily.
 
@@ -449,9 +449,9 @@ Core Metrics:
 * Avg Orders / Vendor / Day
 * Vendor Retention (15-day)
 * MRR
-* Vendor Segmentation (Power / Weak / Dead)
+* Vendor Segmentation (Power / Poor / Poop)
 
-**Purpose:** Decide ship, fix, or kill.
+**Purpose:** Decide ship, fix, or stop.
 
 ---
 
@@ -738,7 +738,7 @@ This structure matches industry-standard event modeling and should be treated as
 * ≥30% 15-day retention
 * At least one unsolicited vendor testimonial
 
-**Failure = Pivot or Kill**
+**Failure = Pivot or Stop**
 
 ---
 
