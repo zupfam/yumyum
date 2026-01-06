@@ -392,3 +392,5 @@ Dish Grid (Main Menu Section)
 - Buttons have slight shadows, pill shape.
 
 ---
+
+- Need to add a local ai for menu recom chatbot that would be so cool.

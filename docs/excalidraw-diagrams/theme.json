@@ -1,0 +1,11 @@
+{
+  "name": "YumYum Standard",
+  "colors": {
+    "component": { "fill": "#fffbeb", "stroke": "#e67e22" },
+    "database": { "fill": "#feebcf", "stroke": "#c05621" },
+    "service": { "fill": "#ffffff", "stroke": "#4a2c2a" },
+    "external": { "fill": "#fff3dd", "stroke": "#a0522d" },
+    "text": "#4a2c2a",
+    "arrow": "#e67e22"
+  }
+}

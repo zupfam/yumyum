@@ -217,17 +217,17 @@ The process involved exploring various conceptual themes and receiving direct fe
 
 ### Chosen Direction
 
-The chosen design direction is **"Saffron & Chili"**. This theme leverages a rich, premium red and a golden yellow as core colors, executed to evoke a truly "premium, fresh, and tasty" experience fitting for a food application. This selection directly responds to the need for a theme that is visually appealing, appetizing, and creates a strong "hook" for users.
+The chosen design direction is **"YumYum Standard"** as defined in `docs/yumyum_theme.css`. This theme leverages a warm, inviting palette with a soft cream background (`#fffbeb`), a rich earthy brown foreground (`#4a2c2a`), and a vibrant orange primary color (`#e67e22`). It utilizes a sophisticated typography pairing of **Merriweather Sans** for UI elements and **Lora** for serif accents, creating a modern yet classic culinary feel.
 
 ### Design Rationale
 
-"Saffron & Chili" is chosen as the definitive theme due to its strong alignment with the core project requirements for a food app. It utilizes classic, appetite-stimulating colors (red and yellow) but applies them in a sophisticated, balanced manner to achieve a premium feel. The chosen palette creates high visual impact, makes food photography pop, and naturally conveys freshness and deliciousness, fulfilling the "tasty, fresh, premium, hooked" criteria provided.
+"YumYum Standard" is chosen as the definitive theme due to its exceptional alignment with the core project requirements for a high-quality food application. The palette evokes warmth and appetite without being aggressive. The typography combination offers excellent readability (Merriweather Sans) while adding a touch of editorial elegance (Lora), perfect for describing delicious food. The detailed shadow and spacing system defined in the CSS variables ensures a polished, depth-rich interface that feels tactile and premium.
 
 ### Implementation Approach
 
-The "Saffron & Chili" theme will be implemented using the defined Composable, Utility-First Design System.
-*   **Color Palette:** A custom palette featuring a rich, premium red as the primary color and a vibrant golden yellow as the secondary/accent color will be used, supported by clean, neutral backgrounds (deep charcoal for dark mode, airy off-white for light mode). All colors will ensure WCAG AA contrast compliance.
-*   **Typography:** Friendly, modern sans-serif fonts will be selected, with a clear hierarchy to guide the user's eye, enhancing readability while maintaining an inviting tone.
+The "YumYum Standard" theme will be implemented using the defined Composable, Utility-First Design System by directly consuming the CSS variables from `docs/yumyum_theme.css`.
+*   **Color Palette:** Directly mapped from the CSS variables (e.g., `--primary`, `--background`, `--card`).
+*   **Typography:** Implementation of `Merriweather Sans` and `Lora` via Google Fonts, mapped to Tailwind font families.
 *   **Animations:** Magic UI and Aceternity UI components will be utilized to create expressive, responsive, and delightful micro-interactions and transitions that enhance the user experience without overwhelming.
 *   **Imagery:** High-quality, engaging food photography and short video clips will be paramount, presented in full-bleed layouts to maximize visual impact and align with the appetizing theme.
 
