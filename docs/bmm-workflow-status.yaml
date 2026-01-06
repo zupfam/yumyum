@@ -13,7 +13,7 @@ workflow_status:
   product-brief: "docs/brief.md"
   prd: "docs/PRD.md"
   create-ux-design: "docs/ux-design-specification.md"
-  create-architecture: required
+  create-architecture: "docs/architecture.md"
   create-epics-and-stories: required
   test-design: recommended
   validate-architecture: optional
