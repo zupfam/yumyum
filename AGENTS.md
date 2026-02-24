@@ -30,6 +30,9 @@ The `docs/` directory is the **canonical source of truth** for all documentation
 
 ## Setup Commands
 
+- **Python:** ALWAYS use `uv` for dependency management and running commands.
+- **JavaScript/TypeScript:** ALWAYS use `pnpm` for package management and scripts.
+
 You can use the `Makefile` at the root for common tasks:
 - **Setup everything:** `make setup`
 - **Start both servers:** `make dev`
@@ -39,13 +42,10 @@ You can use the `Makefile` at the root for common tasks:
 ### Backend Setup (Manual)
 ```bash
 cd backend
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+uv sync
 # Run on port 6787
-fastapi dev app/main.py --port 6787
+uv run fastapi dev app/main.py --port 6787
 ```
-
 ### Frontend Setup (Manual)
 ```bash
 cd frontend
@@ -53,6 +53,19 @@ pnpm install
 # Runs on port 6786 (configured in vite.config.ts)
 pnpm dev
 ```
+
+---
+
+## Admin Hub (YumYum Core Team)
+
+All administrative operations, vendor onboarding, and system-wide data management are handled via the **Admin Hub** UI.
+
+### Accessing the Admin Hub:
+1.  **URL:** `/admin`
+2.  **Requirement:** Must be logged in with a `superadmin` account (e.g., the default test account).
+3.  **Features:** Onboard new vendors, create brands for existing vendors, and monitor system-wide directory.
+
+---
 
 ### Database Setup
 Use the local PostgreSQL database:
@@ -86,6 +99,26 @@ Use the local PostgreSQL database:
 - **Type Safety:** Maintain strict TypeScript safety in the frontend. Fix all `tsc` errors.
 - **Metrics Philosophy:** Track **outcomes** (Order Clicks, Menu Views), not just curiosity.
 - **Event-Based Tracking:** Emit events to the `menu_events` table for every meaningful user action.
+
+---
+
+## Logging & Observability Standards
+
+- Every feature, API, and critical function MUST include structured logging.
+- Logs must include:
+  - Inputs (sanitized)
+  - Outputs/results
+  - Errors with full context
+- Must include:
+  - `method` name
+  - `request_id` (or `trace_id`)
+  - `file` name (only when useful)
+- Use centralized singleton loggers only (no inline instantiation).
+  - Frontend: `import log from '@/lib/logger'`
+  - Backend: `from backend.app.core.logging import log`
+- Logs must follow the shared structured schema.
+- Avoid noisy, duplicate, or meaningless logs.
+- Any PR without proper logging coverage should be rejected.
 
 ---
 
