@@ -13,13 +13,15 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  ChevronRight
+  ChevronRight,
+  TrendingUp,
+  CreditCard
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { motion } from 'framer-motion';
 import { OnboardingForm } from '../components/vendor/OnboardingForm';
 
-export const Route = createFileRoute('/dashboard')({
+export const Route = createFileRoute('/dashboard' as any)({
   component: Dashboard,
 })
 
@@ -80,29 +82,32 @@ function Dashboard() {
   };
 
   if (isLoading) return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex items-center justify-center min-h-screen bg-background">
       <Loader2 className="h-10 w-10 text-primary animate-spin" />
     </div>
   );
 
   if (isError || !brand) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <OnboardingForm />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <header className="bg-white px-6 py-6 border-b border-gray-100 sticky top-0 z-10">
+      <header className="bg-white/80 backdrop-blur-xl px-6 py-6 border-b border-rose-50 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold">Y</div>
-            <h1 className="font-heading font-bold text-xl">Vendor Hub</h1>
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-rose-200">Y</div>
+            <div>
+              <h1 className="font-heading font-bold text-xl text-foreground">Vendor Hub</h1>
+              <p className="text-[8px] font-bold text-rose-300 uppercase tracking-widest leading-none mt-1">YumYum Business</p>
+            </div>
           </div>
-          <Link to="/dashboard/settings" className="p-2 text-gray-400 hover:bg-gray-50 rounded-full transition-colors">
+          <Link to="/dashboard/settings" className="w-10 h-10 flex items-center justify-center text-rose-300 hover:bg-rose-50 rounded-xl transition-colors">
             <Settings className="h-6 w-6" />
           </Link>
         </div>
@@ -113,99 +118,111 @@ function Dashboard() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 text-center"
+          className="bg-white rounded-[40px] p-8 shadow-sm border border-rose-50 text-center relative overflow-hidden"
         >
-          <div className={`w-20 h-20 mx-auto rounded-full mb-6 flex items-center justify-center transition-colors duration-500 ${brand?.is_active_now ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
-            <Power className="h-10 w-10" />
+          <div className={`w-24 h-24 mx-auto rounded-[32px] mb-6 flex items-center justify-center transition-all duration-700 ${brand?.is_active_now ? 'bg-green-500 text-white shadow-xl shadow-green-100 rotate-12' : 'bg-rose-50 text-rose-200 rotate-0'}`}>
+            <Power className="h-12 w-12" />
           </div>
           
-          <h2 className="text-3xl font-heading font-bold mb-2">
+          <h2 className="text-3xl font-heading font-bold mb-2 text-foreground">
             {brand?.is_active_now ? "You're Live!" : "Ready to start?"}
           </h2>
-          <p className="text-gray-500 mb-8 max-w-xs mx-auto">
+          <p className="text-rose-900/40 mb-8 max-w-[200px] mx-auto font-medium text-sm">
             {brand?.is_active_now 
-              ? "Customers can now find you on the Discovery Portal." 
-              : "Toggle your status to appear on the map for nearby customers."}
+              ? "Customers can now find you on the map." 
+              : "Toggle your status to appear for nearby customers."}
           </p>
 
           <Button 
             size="lg"
             onClick={handleToggleVending}
             disabled={mutation.isPending}
-            className={`w-full h-16 rounded-2xl text-lg font-bold shadow-xl transition-all active:scale-95 ${brand?.is_active_now ? 'bg-red-500 hover:bg-red-600 shadow-red-100' : 'bg-green-600 hover:bg-green-700 shadow-green-100'}`}
+            className={`w-full h-16 rounded-2xl text-lg font-bold shadow-xl transition-all active:scale-95 ${brand?.is_active_now ? 'bg-foreground hover:bg-rose-950 text-white shadow-rose-100' : 'bg-primary hover:bg-rose-600 text-white shadow-rose-100'}`}
           >
             {mutation.isPending ? <Loader2 className="h-6 w-6 animate-spin mr-2" /> : null}
-            {brand?.is_active_now ? "Stop Vending" : "Start Vending Now"}
+            {brand?.is_active_now ? "Stop Vending" : "Go Live Now"}
           </Button>
 
           {error && (
-            <div className="mt-4 flex items-center justify-center gap-2 text-red-500 text-sm font-medium bg-red-50 py-2 rounded-xl">
+            <div className="mt-4 flex items-center justify-center gap-2 text-red-500 text-xs font-bold bg-red-50 py-3 rounded-xl border border-red-100">
               <AlertCircle className="h-4 w-4" />
               {error}
             </div>
           )}
 
           {brand?.is_active_now && (
-             <div className="mt-6 flex items-center justify-center gap-2 text-gray-400 text-xs font-bold uppercase tracking-widest">
-                <MapPin className="h-3 w-3" />
-                Updated just now
+             <div className="mt-6 flex items-center justify-center gap-2 text-green-500 text-[10px] font-bold uppercase tracking-widest">
+                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping" />
+                Broadcasting Location
              </div>
           )}
         </motion.div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-            <div className="bg-orange-50 text-orange-500 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
-               <Eye className="h-5 w-5" />
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="bg-white p-6 rounded-[32px] border border-rose-50 shadow-sm"
+          >
+            <div className="bg-rose-50 text-primary w-12 h-12 rounded-2xl flex items-center justify-center mb-4">
+               <Eye className="h-6 w-6" />
             </div>
-            <div className="text-2xl font-bold">{brand?.view_count || 0}</div>
-            <div className="text-gray-400 text-xs font-bold uppercase tracking-wider">Menu Views</div>
-          </div>
-          <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-            <div className="bg-blue-50 text-blue-500 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
-               <BarChart3 className="h-5 w-5" />
+            <div className="text-3xl font-bold text-foreground">{brand?.view_count || 0}</div>
+            <div className="text-rose-300 text-[10px] font-bold uppercase tracking-widest mt-1">Menu Views</div>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="bg-white p-6 rounded-[32px] border border-rose-50 shadow-sm"
+          >
+            <div className="bg-accent/10 text-accent w-12 h-12 rounded-2xl flex items-center justify-center mb-4">
+               <TrendingUp className="h-6 w-6" />
             </div>
-            <div className="text-2xl font-bold">0</div>
-            <div className="text-gray-400 text-xs font-bold uppercase tracking-wider">Search Appears</div>
-          </div>
+            <div className="text-3xl font-bold text-foreground">0</div>
+            <div className="text-rose-300 text-[10px] font-bold uppercase tracking-widest mt-1">Orders Sent</div>
+          </motion.div>
         </div>
 
         {/* Quick Links */}
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/50">
-            <h3 className="font-bold text-sm uppercase tracking-widest text-gray-400">Quick Actions</h3>
+        <div className="bg-white rounded-[32px] border border-rose-50 shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-rose-50 bg-rose-50/30 flex items-center justify-between">
+            <h3 className="font-bold text-[10px] uppercase tracking-widest text-rose-300">Quick Actions</h3>
+            <Sparkles className="h-4 w-4 text-rose-200" />
           </div>
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-rose-50">
              <button 
                 onClick={() => window.open(`/${brand?.slug}`, '_blank')}
-                className="w-full px-6 py-4 flex justify-between items-center hover:bg-gray-50 transition-colors"
+                className="w-full px-6 py-5 flex justify-between items-center hover:bg-rose-50/30 transition-colors group"
               >
-               <div className="flex items-center gap-3">
-                 <div className="p-2 bg-gray-100 rounded-lg"><ExternalLink className="h-5 w-5 text-gray-500" /></div>
-                 <span className="font-bold text-gray-700">View Public Menu</span>
+               <div className="flex items-center gap-4">
+                 <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center group-hover:bg-white transition-colors"><ExternalLink className="h-5 w-5 text-rose-300" /></div>
+                 <span className="font-bold text-foreground">View Public Menu</span>
                </div>
-               <ChevronRight className="h-5 w-5 text-gray-300" />
+               <ChevronRight className="h-5 w-5 text-rose-200" />
              </button>
-             <Link to="/dashboard/menu" className="w-full px-6 py-4 flex justify-between items-center hover:bg-gray-50 transition-colors">
-               <div className="flex items-center gap-3">
-                 <div className="p-2 bg-gray-100 rounded-lg"><CheckCircle2 className="h-5 w-5 text-gray-500" /></div>
-                 <span className="font-bold text-gray-700">Edit Menu Items</span>
+             <Link to="/dashboard/menu" className="w-full px-6 py-5 flex justify-between items-center hover:bg-rose-50/30 transition-colors group">
+               <div className="flex items-center gap-4">
+                 <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center group-hover:bg-white transition-colors"><CreditCard className="h-5 w-5 text-rose-300" /></div>
+                 <span className="font-bold text-foreground">Manage Menu Items</span>
                </div>
-               <ChevronRight className="h-5 w-5 text-gray-300" />
+               <ChevronRight className="h-5 w-5 text-rose-200" />
              </Link>
           </div>
         </div>
       </main>
 
-      {/* Logout etc? */}
-      <div className="px-6 mt-4">
-        <Button variant="outline" className="w-full h-14 rounded-2xl border-2 border-gray-200 text-gray-500 font-bold" onClick={() => {
-          localStorage.removeItem('token');
-          navigate({ to: '/login' });
-        }}>
-          Logout
-        </Button>
+      {/* Logout */}
+      <div className="max-w-4xl mx-auto px-6 mt-4">
+        <button 
+          className="w-full h-16 rounded-2xl border-2 border-rose-50 text-rose-200 font-bold hover:bg-rose-50 transition-colors"
+          onClick={() => {
+            localStorage.removeItem('token');
+            navigate({ to: '/login' });
+          }}
+        >
+          Logout of Hub
+        </button>
       </div>
     </div>
   );

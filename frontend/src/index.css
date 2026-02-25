@@ -1,18 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #ea580c;
+  --color-primary: #e11d48; /* Vibrant Rose */
   --color-primary-foreground: #ffffff;
-  --color-accent: #2563eb;
-  --color-background: #fff7ed;
-  --color-foreground: #0f172a;
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
+  --color-secondary: #fb7185;
+  --color-accent: #2563eb; /* Engagement Blue */
+  --color-background: #fff1f2; /* Soft Rose Tint */
+  --color-foreground: #881337;
+  --color-muted: #f0ecf2;
+  --color-border: #fecdd3;
+  --color-input: #fecdd3;
+  --color-ring: #e11d48;
   
-  --font-heading: "Playfair Display SC", serif;
-  --font-body: "Karla", sans-serif;
+  --font-heading: "Fredoka", sans-serif;
+  --font-body: "Nunito", sans-serif;
   
+  --radius-3xl: 2rem;
+  --radius-4xl: 2.5rem;
   --radius-xl: calc(var(--radius) + 4px);
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -21,26 +25,26 @@
 
 @layer base {
   :root {
-    --background: 33 100% 96%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 350 100% 98%;
+    --foreground: 341 76% 30%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 341 76% 30%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 20.5 86.2% 47.1%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --popover-foreground: 341 76% 30%;
+    --primary: 348 83% 50%;
+    --primary-foreground: 348 100% 98%;
+    --secondary: 348 91% 71%;
+    --secondary-foreground: 348 83% 50%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 221 83% 53%;
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 20.5 86.2% 47.1%;
-    --radius: 0.75rem;
+    --border: 348 83% 91%;
+    --input: 348 83% 91%;
+    --ring: 348 83% 50%;
+    --radius: 1rem;
   }
 
   .dark {
