@@ -1,0 +1,64 @@
+{
+  // --- File Filtering Setting Added Here ---
+  "fileFiltering": {
+    // If true, the CLI automatically excludes files listed in .gitignore 
+    // when using file-related tools (like read_file, glob, etc.).
+    "respectGitIgnore": false 
+  },
+  // -----------------------------------------
+  
+  "ui": {
+    "accessibility": {
+      "screenReader": false
+    },
+    "showStatusInTitle": true,
+    "showMemoryUsage": true,
+    "showLineNumbers": true,
+    "showCitations": true,
+    "theme": "Default"
+  },
+  "tools": {
+    "shell": {
+      "showColor": true,
+      "enableInteractiveShell": true
+    },
+    "truncateToolOutputThreshold": 2000000,
+    "autoAccept": true
+  },
+  "context": {
+    "fileName": "AGENTS.md",
+    "includeDirectories": [
+      ".bmad-core"
+    ]
+  },
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp",
+        "--api-key",
+        "${CTX7_API_KEY}"
+      ]
+    }
+  },
+  "model": {
+    "name": "gemini-2.5-pro"
+  },
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
+  "general": {
+    "preferredEditor": "code",
+    "enablePromptCompletion": false,
+    "debugKeystrokeLogging": false
+  },
+  "output": {
+    "format": "text"
+  },
+  "ide": {
+    "enabled": true
+  }
+}

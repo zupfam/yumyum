@@ -6,6 +6,24 @@ status: 'complete'
 completedAt: '2026-01-06'
 ---
 
+# YumYum Premium Tier Fullstack Architecture
+
+### Section 1 of 18: Introduction
+
+This document outlines the complete fullstack architecture for the YumYum **Premium Tier**. It details the backend systems, frontend implementation, and their integration, serving as the single source of truth for development. This architecture transitions the platform from a simple Google Sheets-based MVP to a scalable, secure, and feature-rich application powered by a robust backend.
+
+#### Section 1.1 of 18: Starter Template or Existing Project
+
+This is an evolution of an existing project. The initial MVP was a greenfield application using Next.js and Google Sheets. This new architecture will be integrated into the existing codebase, replacing the Google Sheets data source with a Supabase backend for premium users.
+
+#### Section 1.2 of 18: Change Log
+
+| Date       | Version | Description                                | Author              |
+| :--------- | :------ | :----------------------------------------- | :------------------ |
+| 2025-10-21 | 2.0     | Initial architecture for the Premium Tier. | Winston (Architect) |
+
+---
+
 # Architecture Decision Document
 
 _This document builds collaboratively through step-by-step discovery. Sections are appended as we work through each architectural decision together._
@@ -15,6 +33,14 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 YumYum is a multi-tenant SaaS platform built on a decoupled architecture, prioritizing zero infrastructure cost, high performance, and rapid scalability. It leverages Next.js for a fast client-side static frontend, Python FastAPI for a robust API backend, Supabase as its primary BaaS, and two Cloudinary accounts for resilient media asset management.
 
 ## 2. Technical Stack
+
+- **Platform:** Vercel and Supabase
+- **Key Services:**
+  - **Vercel:** Hosting, CI/CD (Free Tier), SEO.
+  - **Supabase:** PostgreSQL Database, Authentication (Magic Link), Storage, Auto-generated APIs.
+  - **ImageKit:** Multi-account media hosting and optimization.
+  - **Lark:** Webhook for critical alerts.
+- **Deployment Host and Regions:** Vercel (Global Edge Network), Supabase (`ap-south-1` Mumbai).
 
 *   **Frontend:** Next.js (TypeScript, client-side static generation)
 *   **Backend (API):** Python FastAPI
@@ -28,6 +54,10 @@ YumYum is a multi-tenant SaaS platform built on a decoupled architecture, priori
 *   **Analytics:** Google Analytics 4 (GA4)
 
 ## 3. High-Level Architecture
+
+- **Structure:** Monorepo
+- **Monorepo Tool:** pnpm workspaces
+- **Package Organization:** The existing monorepo structure will be maintained. New backend-related code (e.g., Supabase schema, RLS policies) will be organized within the existing project structure, likely in a new `supabase/` directory at the root.
 
 ### 3.1 Overall System Architecture
 The system employs a decoupled, multi-tier architecture to ensure high performance, scalability, and maintainability.
@@ -56,6 +86,12 @@ The system uses a relational PostgreSQL schema (managed by Supabase) designed fo
 *   **`dishes`:** Menu items categorized and priced.
 *   **`vendor_updates`:** Promotional "stories" or daily specials.
 *   **`vendor_social_accounts`:** External links (Instagram, WhatsApp, etc.).
+
+    subgraph "External Services"
+        G[ImageKit (Media)]
+        H[Lark (Alerts)]
+        GS[Google Sheets]
+    end
 
 ### 4.2 Behavioral Data
 *   **`menu_events`:** The polymorphic event stream for all analytics.
@@ -353,7 +389,7 @@ Both frontend and backend development environments will offer a highly productiv
 **Event System Patterns:**
 *   **Event Naming:** Kebab-case, domain-driven (e.g., `user.created`, `order.placed`, `dish.updated`).
 *   **Event Payload Structures:** Clearly defined using Pydantic models (Python) and TypeScript interfaces, ensuring type safety and consistency.
-*   **Event Versioning:** Implicitly handled by schema changes for now, explicit versioning (e.g., `v1.user.created`) can be introduced if schema changes frequently.
+*   **Event Versioning:** Implicitly handled by schema changes for now, explicit versioning (e.g., `v1.user.created`) can be introduced if schema frequently changes.
 *   **Async Event Handling:** Use background tasks in FastAPI for non-blocking event processing.
 
 **State Management Patterns:**
@@ -417,6 +453,15 @@ Both frontend and backend development environments will offer a highly productiv
 *   Direct SQL queries in FastAPI handlers instead of using SQLModel.
 
 ## Project Structure & Boundaries
+
+- **Jamstack Architecture:** The frontend remains a pre-rendered application served from a global CDN, with dynamic functionality handled by client-side JavaScript interacting with the Supabase backend.
+  - _Rationale:_ This ensures maximum performance and a great user experience.
+- **Backend as a Service (BaaS):** We are leveraging Supabase to provide backend functionality out-of-the-box.
+  - _Rationale:_ This dramatically reduces backend development time, allowing us to focus on the vendor-facing dashboard and features.
+- **Row-Level Security (RLS):** All data access will be controlled at the database level using Supabase's RLS policies.
+  - _Rationale:_ This is a highly secure and scalable way to enforce data isolation between vendors.
+- **Client-Side Rendering (CSR) for Dashboard:** The vendor dashboard will be a dynamic, client-side rendered application.
+  - _Rationale:_ This provides a rich, app-like experience for logged-in vendors.
 
 ### Complete Project Directory Structure
 
@@ -524,312 +569,832 @@ yumyum/
 └── docs/                          # Project documentation (PRD, UX, Architecture, etc.)
 ```
 
-### Architectural Boundaries
-
-**API Boundaries:**
-*   **External API Endpoints:** The FastAPI backend exposes a well-defined RESTful HTTP API (e.g., `/api/v1/`) that serves as the primary communication interface for the Next.js frontend and any other potential external consumers.
-*   **Internal Service Boundaries:** Within the FastAPI application, clear boundaries exist between API endpoints (routers), business logic (services), and data access (CRUD operations/SQLModel models). Communication between these layers is via explicit Python function calls and Pydantic models.
-*   **Authentication and Authorization Boundaries:** Supabase Auth is the primary authentication provider, with FastAPI dependencies handling JWT token validation. Application-level authorization is enforced in FastAPI services, complemented by Supabase RLS policies acting as a database-level security boundary.
-*   **Data Access Layer Boundaries:** SQLModel models and CRUD operations form a distinct data access layer within FastAPI, abstracting direct SQL interaction from the business logic services.
-
-**Component Boundaries (Frontend - Next.js):**
-*   **Communication Patterns:** Parent-child component communication primarily uses React props. Global state management is handled by Zustand stores. React Context may be used for local or thematic state that is shared deeply within a component subtree.
-*   **State Management Boundaries:** Zustand stores are globally accessible but logically scoped per domain/feature. Local component state is managed with React's `useState` or `useReducer` hooks.
-*   **Service Communication Patterns:** Client-side data fetching libraries (e.g., React Query or SWR) manage interactions with the FastAPI backend, providing caching, revalidation, and error handling for API calls.
-
-**Data Boundaries:**
-*   **Database Schema Boundaries:** Explicitly defined by the SQLModel models in the FastAPI backend and the PostgreSQL schema in Supabase (`GEMINI.md`).
-*   **Data Access Patterns:** FastAPI services interact with the database primarily through SQLModel via CRUD operations. Direct SQL through Supabase client may be used for complex analytics or database functions.
-*   **Caching Boundaries:** Layered caching strategy with Next.js/Vercel CDN for static assets, Cloudinary CDN for media, in-memory caching in FastAPI, and Supabase (PostgreSQL) features for materialized views.
-
-### Requirements to Structure Mapping
-
-**Feature/Epic Mapping:**
-*   **Digital Storefront & Dynamic Menu:**
-    *   Frontend: `frontend/src/features/vendors/`, `frontend/src/features/menu/`, `frontend/src/components/` (atoms, molecules, organisms for UI elements).
-    *   Backend: `backend/app/api/v1/endpoints/vendors.py`, `backend/app/api/v1/endpoints/dishes.py`, `backend/app/schemas/vendors.py`, `backend/app/schemas/dishes.py`, `backend/app/crud/vendors.py`, `backend/app/crud/dishes.py`, `backend/app/models/vendors.py`, `backend/app/models/dishes.py`, `backend/app/models/updates.py`.
-*   **Ordering (Client-Side Cart & WhatsApp Flow):**
-    *   Frontend: `frontend/src/features/cart/`, `frontend/src/lib/stores/cartStore.ts`.
-    *   Backend: `backend/app/api/v1/endpoints/orders.py`, `backend/app/schemas/orders.py`, `backend/app/crud/orders.py`, `backend/app/models/orders.py`, `backend/app/services/orders.py`.
-*   **Vendor Dashboard:**
-    *   Frontend: `frontend/src/features/dashboard/`, `frontend/src/components/dashboard/`.
-    *   Backend: `backend/app/api/v1/endpoints/analytics.py` (for menu_events aggregation), `backend/app/services/analytics.py`, `backend/app/models/events.py`.
-*   **Authentication (Secure Vendor Login):**
-    *   Frontend: `frontend/src/features/auth/`, `frontend/src/lib/auth/`.
-    *   Backend: `backend/app/api/v1/endpoints/auth.py`, `backend/app/core/security.py`, `backend/app/services/auth.py`, `backend/app/schemas/auth.py`.
-
-**Cross-Cutting Concerns:**
-*   **Security:**
-    *   Backend: `backend/app/core/security.py` (for token handling, encryption), `backend/app/core/middleware.py` (for CORS, HTTPS redirect), FastAPI dependencies (`backend/app/api/v1/dependencies.py`). Supabase RLS policies (in `backend/supabase/migrations/`).
-    *   Frontend: `frontend/src/lib/auth/`, secure storage for tokens.
-*   **Performance:**
-    *   Frontend: `next.config.js` (image optimization), `frontend/src/lib/utils/performance.ts` (e.g., virtualization, memoization hooks), client-side data fetching library configuration.
-    *   Backend: `backend/app/core/config.py` (for Gunicorn/Uvicorn worker config), caching implementation within `backend/app/services/` or middleware.
-*   **Observability (Monitoring/Logging):**
-    *   Backend: `backend/app/core/logging.py`, Sentry integration.
-    *   Frontend: Sentry integration, usage of platform-specific logging.
-*   **Data Integrity/Validation:**
-    *   Backend: Pydantic schemas in `backend/app/schemas/`, SQLModel models in `backend/app/models/`, `backend/app/core/exceptions.py`. Frontend validation for user input.
-
-### Integration Points
-
-**Internal Communication:**
-*   **Frontend Components:** Props for parent-child, Zustand for shared state, React Context for local sub-tree state.
-*   **Backend Services:** Python function calls, dependency injection within FastAPI.
-
-**External Integrations:**
-*   **FastAPI Backend <-> Supabase:** Supabase client library/SDK, direct SQL queries for migrations.
-*   **FastAPI Backend <-> Cloudinary:** Cloudinary Python SDK for media uploads/management.
-*   **Next.js Frontend <-> FastAPI Backend:** HTTP/REST API calls using a client-side data fetching library (e.g., React Query or SWR).
-*   **Next.js Frontend <-> Supabase (direct for Auth):** Supabase JavaScript SDK for client-side authentication flows.
-*   **Next.js Frontend <-> Cloudinary:** Direct use of Cloudinary URLs for displaying media, potentially client-side SDK for direct uploads.
-*   **WhatsApp:** Deep linking via frontend.
-
-### File Organization Patterns
-
-**Configuration Files:**
-*   Root: `package.json`, `tsconfig.json`, `.env.local.example`, `.gitignore`.
-*   Frontend: `frontend/package.json`, `frontend/next.config.js`, `frontend/tailwind.config.js`, `frontend/tsconfig.json`, `frontend/.env.local`, `frontend/.env.example`.
-*   Backend: `backend/requirements.txt`, `backend/.env`, `backend/.env.example`, `backend/Dockerfile`, `backend/render.yaml`, `backend/app/core/config.py`.
-
-**Source Organization:**
-*   Frontend: `frontend/src/` (organized by App Router / `pages`, then `components`, `features`, `lib`, `types`).
-*   Backend: `backend/app/` (organized by `core`, `api`, `schemas`, `crud`, `models`, `services`, `tests`).
-
-**Test Organization:**
-*   Frontend: `frontend/tests/` (with `unit`, `integration`, `e2e` subdirectories), or co-located `*.test.ts` within `src/`.
-*   Backend: `backend/app/tests/` (with `unit`, `integration`, `e2e` subdirectories).
-
-**Asset Organization:**
-*   Frontend `public/` for static assets.
-*   Cloudinary for all dynamic images/videos.
-
-### Development Workflow Integration
-
-**Development Server Structure:**
-*   Frontend: `npm run dev` in `frontend/` (Next.js development server).
-*   Backend: `uvicorn main:app --reload` from `backend/` (FastAPI development server).
-*   Monorepo `package.json` scripts for parallel execution (e.g., `npm run dev:all`).
-
-**Build Process Structure:**
-*   Frontend: `npm run build` in `frontend/` (Next.js production build).
-*   Backend: `docker build -t yumyum-backend .` from `backend/` (Docker multi-stage build).
-*   Monorepo `package.json` scripts for coordinated builds.
-
-**Deployment Structure:**
-*   Frontend: Vercel CLI / GitHub integration.
-*   Backend: Render CLI / GitHub integration (`render.yaml`).
-
-## Architecture Validation Results
-
-### Coherence Validation ✅
-
-**Decision Compatibility:**
-All technology choices (Next.js, FastAPI, Supabase, Cloudinary, Vercel, Render) are highly compatible, cloud-native friendly, and integrate seamlessly within the proposed monorepo structure. Specific tool versions identified (SQLModel `0.0.31`, FastAPI-Limiter `0.1.6`) are current stable releases. No contradictory decisions were identified; all architectural choices consistently support the overarching project goals of performance, scalability, and maintainability.
+### Section 3 of 18: Tech Stack
+
+| Category             | Technology                         | Version       | Purpose                                      | Rationale                                                                             |
+| :------------------- | :--------------------------------- | :------------ | :------------------------------------------- | :------------------------------------------------------------------------------------ |
+| Frontend Language    | TypeScript                         | latest        | Type safety and scalability                  | Industry standard for modern web development, reduces errors.                         |
+| Frontend Framework   | Next.js                            | latest        | Core application framework                   | Provides a robust, performant, and scalable foundation for the UI.                    |
+| UI Component Library | Shadcn UI, Magic UI, Aceternity UI | latest        | UI components and animations                 | A rich ecosystem to accelerate development and achieve a high-quality, modern finish. |
+| State Management     | Zustand                            | latest        | Global state management                      | A small, fast, and scalable solution with a simple hook-based API.                    |
+| Backend Language     | TypeScript                         | latest        | Language for Supabase Edge Functions         | To write any necessary server-side logic in a familiar language.                      |
+| Backend Framework    | Supabase                           | latest        | Backend as a Service (BaaS)                  | Provides database, auth, and APIs out-of-the-box, accelerating development.           |
+| API Style            | REST                               | via PostgREST | Auto-generated APIs for database interaction | Supabase provides a powerful and secure RESTful API layer automatically.              |
+| Database             | Supabase (Postgres)                | latest        | Primary data store for premium vendors       | A robust, open-source relational database with excellent performance.                 |
+| Cache                | N/A                                | N/A           | Client-side caching will be used             | Caching will be handled at the client level to improve perceived performance.         |
+| File Storage         | ImageKit                           | N/A           | Multi-account media hosting and optimization | A powerful solution for managing and serving images efficiently.                      |
+| Authentication       | Supabase Auth                      | latest        | Secure user authentication                   | Provides Magic Link (passwordless) login out-of-the-box.                              |
+| Frontend Testing     | Jest & React Testing Library       | latest        | Unit and integration testing                 | Industry-standard tools for testing React applications.                               |
+| Backend Testing      | Jest                               | latest        | Testing for Supabase Edge Functions          | To ensure any custom server-side logic is reliable.                                   |
+| E2E Testing          | Playwright                         | latest        | End-to-end user flow testing                 | A modern and reliable choice for ensuring critical user journeys work as expected.    |
+| Build Tool           | SWC (via Next.js)                  | latest        | Fast code compilation                        | Integrated into Next.js for optimal performance.                                      |
+| CI/CD                | Vercel                             | N/A           | Continuous integration & deployment          | Seamlessly integrated with the hosting platform for automated builds and deploys.     |
+| Monitoring           | Google Analytics 4                 | N/A           | User behavior and funnel tracking            | Provides essential product engagement KPIs.                                           |
+| Logging              | Lark Webhook                       | N/A           | Critical error alerting                      | A simple mechanism to alert the development team of critical failures.                |
+| CSS Framework        | Tailwind CSS                       | latest        | Utility-first styling                        | Allows for rapid UI development and easy maintenance.                                 |
+
+---
+
+### Section 4 of 18: Data Models (v2)
+
+#### `vendor_mappings`
+
+- **Purpose:** To act as the master directory for all vendors. It will determine whether a vendor's data is on Google Sheets or Supabase and provide the necessary connection info.
+- **TypeScript Interface:**
+
+  ```typescript
+  export type BackendType = 'supabase' | 'gsheets';
+
+  export interface VendorMapping {
+    id: number;
+    vendor_slug: string; // e.g., 'the-burger-den'
+    backend_type: BackendType; // 'supabase' or 'gsheets'
+
+    // Supabase-specific fields
+    supabase_project_id?: string; // Which of the 4 Supabase projects
+
+    // Google Sheets-specific fields
+    gsheet_id?: string;
+
+    // ImageKit account is common to both
+    imagekit_account_id: string; // Which of the 4 ImageKit accounts
+  }
+  ```
+
+#### `Brand`
+
+- **Purpose:** Represents the vendor's brand identity.
+- **TypeScript Interface:** (No changes from previous version)
+  ```typescript
+  export interface Brand {
+    id: number;
+    vendor_id: string; // Foreign Key to auth.users.id
+    name: string;
+    logo_url: string;
+    cuisine: string;
+    address?: string;
+    city?: string;
+    description: string;
+    payment_link: string;
+    whatsapp: string;
+    contact: string;
+    location_link?: string;
+    review_link?: string;
+    instagram?: string;
+    facebook?: string;
+    youtube?: string;
+    custom?: string;
+    full_menu_pic?: string;
+  }
+  ```
+
+#### `Dish`
+
+- **Purpose:** Represents a single menu item.
+- **TypeScript Interface (Updated):**
+  ```typescript
+  export interface Dish {
+    id: number;
+    vendor_id: string; // Foreign Key to auth.users.id
+    category: string;
+    name: string;
+    description: string | null;
+    price: number | null;
+    instock: 'yes' | 'no' | 'hide' | null;
+    veg: 'veg' | 'non-veg' | null;
+    tag: string | null;
+    image: string | null;
+    reel: string | null;
+    created_at: string;
+  }
+  ```
+
+#### `StatusItem`
 
-**Pattern Consistency:**
-Implementation patterns (naming, structural, format, communication, process) are directly aligned with and support the architectural decisions. For example, the Hybrid Authorization pattern aligns perfectly with the chosen technologies (Supabase RLS + FastAPI logic), and the Layered Caching Strategy integrates with FastAPI, Supabase, and CDN capabilities.
+- **Purpose:** Represents a single daily status update.
+- **TypeScript Interface:**
+  ```typescript
+  export interface StatusItem {
+    id: number;
+    brand_id: number; // Foreign Key to Brand.id
+    type: 'image' | 'video' | 'text';
+    content: string;
+    imagekit_file_id?: string; // For deletion from ImageKit
+    create_time: string;
+  }
+  ```
 
-**Structure Alignment:**
-The defined monorepo project structure (separate `frontend/` and `backend/` directories) robustly supports all architectural decisions and chosen patterns. Clear boundaries (API, component, service, data) are established and respected, ensuring modularity. Integration points are explicitly defined within the structure, facilitating seamless communication between components and external services.
+---
 
-### Requirements Coverage Validation ✅
+### Section 5 of 18: API Specification (v2)
 
-**Epic/Feature Coverage:**
-While no formal epics were provided, all functional requirement categories identified (Digital storefront, Dynamic menu, Ordering, Vendor dashboard, Authentication) are explicitly mapped to specific architectural components, API endpoints, and database models within the defined project structure. This ensures every core feature has clear architectural support.
+Our API is the auto-generated REST API provided by Supabase. Our formal policy is to interact with this API _exclusively_ through the `@supabase/supabase-js` client library.
 
-**Functional Requirements Coverage:**
-All functional requirements derived from the PRD are fully supported by the architectural decisions. The chosen technologies and patterns provide the necessary capabilities for implementing the dynamic menu, client-side cart, WhatsApp ordering flow, vendor dashboard, and secure authentication.
+- **Interaction Method:** Supabase Client Library (`@supabase/supabase-js`)
+- **Rationale:** This is a pragmatic and opinionated choice. Using the client library provides a clean, typed, and consistent interface for all data access. It abstracts away the raw HTTP requests, reduces boilerplate, handles JWT token management automatically, and is the most robust way to work with Supabase. We will _not_ make direct HTTP requests to the PostgREST endpoints.
 
-**Non-Functional Requirements Coverage:**
-All critical non-functional requirements are robustly addressed:
-*   **Performance:** Covered by Next.js static generation, Layered Frontend Performance Optimization, Layered Caching, Fine-tuned FastAPI Scaling, and Cloudinary CDN.
-*   **Scalability:** Achieved through the decoupled architecture, platform auto-scaling, optimized FastAPI configuration, and Supabase managed scaling/future read replica options.
-*   **Cost Efficiency:** Supported by leveraging BaaS (Supabase) and platform starter tiers (Vercel/Render).
-*   **Security:** Covered by Supabase Magic Link, Hybrid Authorization (RLS + FastAPI), Built-in FastAPI Middleware, Application-level Encryption, FastAPI-Limiter.
-*   **Maintainability:** Enhanced by modular design, SQLModel, Supabase migrations, consistent patterns, error handling standards, centralized logging.
-*   **Usability/UX:** Supported by rich frontend stack, Hybrid Component Architecture, and aggressive performance optimizations.
-*   **Data Integrity:** Ensured by SQLModel, Pydantic validation, Supabase Migrations, and database constraints.
+#### Example Usage (via Supabase Client)
 
-### Implementation Readiness Validation ✅
+- **Create a new dish:**
 
-**Decision Completeness:**
-All critical decisions have been documented, including chosen technologies, specific versions (where applicable), and clear rationales. These decisions provide a solid foundation for implementation.
+  ```typescript
+  const { data, error } = await supabase
+    .from('dishes')
+    .insert({ vendor_id: '...', name: 'New Pizza', ... });
+  ```
 
-**Structure Completeness:**
-The project structure is detailed and specific, defining directories and file organization for both frontend and backend. Integration points, architectural boundaries, and requirements mapping are explicitly laid out.
+- **Read all dishes for a vendor:**
 
-**Pattern Completeness:**
-A comprehensive set of implementation patterns and consistency rules has been defined across naming, structure, format, communication, and process. These patterns include concrete examples and anti-patterns to guide AI agents effectively.
+  ```typescript
+  const { data, error } = await supabase
+    .from('dishes')
+    .select('*')
+    .eq('vendor_id', '...');
+  ```
 
-### Gap Analysis Results
+- **Update a dish:**
 
-*   **Critical Gaps:** None identified. The architecture is complete and ready for implementation.
-*   **Important Gaps:**
-    *   Specific Python cryptography library for application-level encryption needs to be selected and integrated.
-    *   Detailed configuration parameters for Gunicorn workers on Render will require fine-tuning based on actual workload and instance types.
-    *   Specific client-side data fetching library (React Query vs. SWR) for frontend performance optimization needs a final decision.
-    *   Detailed Sentry integration strategy (e.g., error reporting for frontend/backend, custom tags) needs to be defined during implementation setup.
-*   **Nice-to-Have Gaps:**
-    *   Additional concrete examples for some complex patterns (e.g., advanced authorization scenarios).
-    *   Formal documentation of the process for updating architectural patterns.
-    *   Tooling recommendations for code quality (e.g., code coverage, vulnerability scanning) beyond linters/formatters.
-    *   A defined performance testing strategy.
+  ```typescript
+  const { data, error } = await supabase
+    .from('dishes')
+    .update({ price: 15.99 })
+    .eq('id', 123);
+  ```
 
-### Validation Issues Addressed
+- **Delete a dish:**
+  ```typescript
+  const { data, error } = await supabase.from('dishes').delete().eq('id', 123);
+  ```
 
-No critical issues were found that block implementation. The identified "Important Gaps" are considered actionable items for the initial implementation phase, representing areas for further refinement rather than architectural blockers.
+---
 
-### Architecture Completeness Checklist
+### Section 6 of 18: Components
 
-**✅ Requirements Analysis**
+This section outlines the high-level frontend components required for the Premium Tier vendor dashboard.
 
-- [x] Project context thoroughly analyzed
-- [x] Scale and complexity assessed
-- [x] Technical constraints identified
-- [x] Cross-cutting concerns mapped
+#### `VendorDashboard`
 
-**✅ Architectural Decisions**
+- **Responsibility:** Acts as the main layout and container for the entire authenticated vendor experience. It will handle the routing between the different management sections.
+- **Dependencies:** `AuthManager`, `DashboardNav`.
 
-- [x] Critical decisions documented with versions
-- [x] Technology stack fully specified
-- [x] Integration patterns defined
-- [x] Performance considerations addressed
+#### `DishesManagement`
 
-**✅ Implementation Patterns**
+- **Responsibility:** Provides the full CRUD interface for a vendor to manage their dishes. It will include a data table to list dishes and a form to add/edit them.
+- **Dependencies:** `DataTable`, `EntityForm`, Supabase client.
 
-- [x] Naming conventions established
-- [x] Structure patterns defined
-- [x] Communication patterns specified
-- [x] Process patterns documented
+#### `BrandProfileManagement`
 
-**✅ Project Structure**
+- **Responsibility:** Provides a form for the vendor to update their brand profile information.
+- **Dependencies:** `EntityForm`, Supabase client.
 
-- [x] Complete directory structure defined
-- [x] Component boundaries established
-- [x] Integration points mapped
-- [x] Requirements to structure mapping complete
+#### `StatusManagement`
 
-### Architecture Readiness Assessment
+- **Responsibility:** Provides an interface for the vendor to manage their daily status updates.
+- **Dependencies:** `EntityForm`, Supabase client.
 
-**Overall Status:** READY FOR IMPLEMENTATION
+#### `AuthManager`
 
-**Confidence Level:** High, given the comprehensive, collaborative approach and the robust, modern technology stack chosen.
+- **Responsibility:** Handles the entire authentication flow, including the Magic Link login form, redirect handling, and logout functionality.
+- **Dependencies:** Supabase client.
 
-**Key Strengths:**
-*   **Strong Performance Foundation:** Next.js static generation, FastAPI async capabilities, layered caching, and Cloudinary CDN ensure a fast user experience.
-*   **Scalable and Modular Design:** Decoupled frontend/backend, hybrid component architecture, and layered backend services promote easy scaling and maintainability.
-*   **Robust Security:** Defense-in-depth with Supabase RLS, FastAPI authorization, and application-level encryption.
-*   **Clear Guidance for AI Agents:** Detailed decisions, patterns, and structure provide unambiguous instructions for consistent implementation.
-*   **Cost-Efficient Leveraging of BaaS/PaaS:** Maximizes value from Supabase, Vercel, and Render.
+#### `DataTable`
 
-**Areas for Future Enhancement:**
-*   Formalization of key management for application-level encryption.
-*   Introduction of Redis for advanced distributed caching as load increases.
-*   Implementation of advanced performance monitoring beyond Sentry (e.g., Prometheus/Grafana) for deeper insights into system metrics.
-*   Exploring GraphQL for API flexibility if frontend data fetching patterns become highly complex.
+- **Responsibility:** A reusable component to display lists of data (e.g., dishes) in a table with sorting, filtering, and action buttons.
+- **Dependencies:** Shadcn UI Table component.
 
-### Implementation Handoff
+#### `EntityForm`
 
-**AI Agent Guidelines:**
+- **Responsibility:** A generic, reusable form component for creating and editing entities (Dishes, Brand Profile, Status). It will include input fields, validation, and the ImageKit image uploader.
+- **Dependencies:** React Hook Form, Shadcn UI Form components, ImageKit uploader.
 
-- Follow all architectural decisions exactly as documented in this `docs/architecture.md` file.
-- Use implementation patterns consistently across all components.
-- Respect project structure and boundaries as defined.
-- Refer to this document for all architectural questions and clarifications.
+#### `PublicVendorPage`
 
-**First Implementation Priority:**
-Project initialization:
-*   Frontend: `npx create-next-app@latest frontend --typescript --tailwind --eslint`
-*   Backend: Set up Dockerized FastAPI application (with `main.py`, `requirements.txt`)
+- **Responsibility:** Renders the entire public-facing vendor page. This is a Server Component that fetches its own data for ISR.
+- **Dependencies:** `BrandHeader`, `CategoryHighlights`, `ControlsBar`, `DishGrid`.
 
-## Architecture Completion Summary
+---
 
-### Workflow Completion
+### Section 7 of 18: External APIs
 
-**Architecture Decision Workflow:** COMPLETED ✅
-**Total Steps Completed:** 8
-**Date Completed:** 2026-01-06
-**Document Location:** /var/codespace/yumyum/docs/architecture.md
+This section details the external services the YumYum Premium Tier will integrate with.
 
-### Final Architecture Deliverables
+#### Supabase API
 
-**📋 Complete Architecture Document**
+- **Purpose:** Serves as the primary backend for data storage, authentication, and serverless functions.
+- **Documentation:** [https://supabase.com/docs](https://supabase.com/docs)
+- **Authentication:** API Key and JWT for client-side access.
 
-- All architectural decisions documented with specific versions
-- Implementation patterns ensuring AI agent consistency
-- Complete project structure with all files and directories
-- Requirements to architecture mapping
-- Validation confirming coherence and completeness
+#### ImageKit API
 
-**🏗️ Implementation Ready Foundation**
+- **Purpose:** Hosts, optimizes, and serves all media assets (vendor logos, dish images).
+- **Documentation:** [https://docs.imagekit.io/](https://docs.imagekit.io/)
+- **Authentication:** API Key and Secret for upload operations.
 
-- 12 architectural decisions made
-- 20 implementation patterns defined
-- N/A architectural components specified (as per FSD, components are feature-specific)
-- 7 requirements fully supported
+#### Lark Webhook API
 
-**📚 AI Agent Implementation Guide**
+- **Purpose:** Used for sending critical system alerts to the development team's communication channel.
+- **Documentation:** Specific to the configured incoming webhook URL.
+- **Authentication:** None (relies on the secrecy of the webhook URL).
 
-- Technology stack with verified versions
-- Consistency rules that prevent implementation conflicts
-- Project structure with clear boundaries
-- Integration patterns and communication standards
+---
 
-### Implementation Handoff
+### Section 8 of 18: Core Workflows
 
-**For AI Agents:**
-This architecture document is your complete guide for implementing yumyum. Follow all decisions, patterns, and structures exactly as documented.
+This diagram illustrates the sequence of events for a vendor logging in and updating a dish in the new Premium Tier dashboard.
 
-**First Implementation Priority:**
-Project initialization:
-*   Frontend: `npx create-next-app@latest frontend --typescript --tailwind --eslint`
-*   Backend: Set up Dockerized FastAPI application (with `main.py`, `requirements.txt`)
+```mermaid
+sequenceDiagram
+    participant User as Vendor
+    participant Frontend as Next.js App
+    participant SupabaseAuth as Supabase Auth
+    participant SupabaseAPI as Supabase API
 
-**Development Sequence:**
+    User->>Frontend: Enters email on /login page
+    Frontend->>SupabaseAuth: signInWithOtp({ email })
+    SupabaseAuth-->>User: Sends Magic Link via Email
 
-1. Initialize project using documented starter template
-2. Set up development environment per architecture
-3. Implement core architectural foundations
-4. Build features following established patterns
-5. Maintain consistency with documented rules
+    User->>Frontend: Clicks Magic Link in email
+    Frontend->>SupabaseAuth: Verifies token, creates session
+    SupabaseAuth-->>Frontend: Returns authenticated user session
+    Frontend-->>User: Redirects to /[vendor-slug]/dashboard
 
-### Quality Assurance Checklist
+    User->>Frontend: Navigates to 'Dishes' section
+    Frontend->>SupabaseAPI: GET /rest/v1/dishes
+    SupabaseAPI-->>Frontend: Returns list of dishes
 
-**✅ Architecture Coherence**
+    User->>Frontend: Clicks 'Edit' on a dish
+    Frontend-->>User: Displays dish details in a form
 
-- [x] All decisions work together without conflicts
-- [x] Technology choices are compatible
-- [x] Patterns support the architectural decisions
-- [x] Structure aligns with all choices
+    User->>Frontend: Changes price and clicks 'Save'
+    Frontend->>SupabaseAPI: PATCH /rest/v1/dishes?id=eq.{dish_id}
+    SupabaseAPI-->>Frontend: Returns success confirmation
+    Frontend-->>User: Shows 'Saved!' toast notification
+```
 
-**✅ Requirements Coverage**
+## 8.1 Authentication and Onboarding
 
-- [x] All functional requirements are supported
-- [x] All non-functional requirements are addressed
-- [x] Cross-cutting concerns are handled
-- [x] Integration points are defined
+This ensures that only registered vendors can access the system and are directed to their personalized dashboard immediately after login.
 
-**✅ Implementation Readiness**
+## 8.2 Top Vendors List Automation
 
-- [x] Decisions are specific and actionable
-- [x] Patterns prevent agent conflicts
-- [x] Structure is complete and unambiguous
-- [x] Examples are provided for clarity
-
-### Project Success Factors
-
-**🎯 Clear Decision Framework**
-Every technology choice was made collaboratively with clear rationale, ensuring all stakeholders understand the architectural direction.
-
-**🔧 Consistency Guarantee**
-Implementation patterns and rules ensure that multiple AI agents will produce compatible, consistent code that works together seamlessly.
-
-**📋 Complete Coverage**
-All project requirements are architecturally supported, with clear mapping from business needs to technical implementation.
-
-**🏗️ Solid Foundation**
-The chosen starter template and architectural patterns provide a production-ready foundation following current best practices.
+- **Purpose:** To automatically generate and update a list of the most visited vendor pages for display on the homepage.
+- **Process:** A weekly GitHub Actions workflow queries Google Analytics data from BigQuery (based on total page views for `/[vendor_slug]` pages), fetches additional vendor details (name, cuisine, logo_url) from Supabase, and saves the top 10 vendors to a static JSON file (`public/top-vendors.json`).
+- **Data Source:** Google Analytics 4 (GA4) via BigQuery Export.
+- **Trigger:** Weekly GitHub Actions cron job (every Sunday at 00:00 UTC).
+- **Output:** `public/top-vendors.json` (consumed by `TopVendorsSection` component on the homepage).
+
+---
+
+### Section 9 of 18: Database Schema (SQL)
+
+```sql
+-- Function to automatically update modify_time
+CREATE OR REPLACE FUNCTION public.update_modify_time()
+RETURNS TRIGGER AS $
+BEGIN
+    NEW.modify_time = now();
+    RETURN NEW;
+END;
+$ language 'plpgsql';
+
+-- Function to get user ID by email for secure server-side checks
+CREATE OR REPLACE FUNCTION get_user_id_by_email(user_email TEXT)
+RETURNS TABLE (id UUID, email TEXT)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public;
+AS $
+BEGIN
+  RETURN QUERY
+  SELECT au.id, au.email
+  FROM auth.users au
+  WHERE au.email = user_email;
+END;
+$;
+
+
+-- ENUM Types
+CREATE TYPE instock_status AS ENUM ('yes', 'no', 'hide');
+CREATE TYPE dietary_info AS ENUM ('veg', 'non-veg');
+CREATE TYPE status_type AS ENUM ('image', 'video', 'text');
+
+-- ##################################################
+-- ### SCHEMA FOR THE PRIMARY SUPABASE PROJECT ###
+-- ##################################################
+
+-- Table for vendor mappings and membership data
+CREATE TABLE public.vendor_mappings (
+    id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+    vendor_slug text NOT NULL UNIQUE,
+    auth_user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL,
+    datastore_type text NOT NULL,
+    datastore_id text NOT NULL,
+    imagekit_account_id text NOT NULL,
+    is_member boolean DEFAULT true NOT NULL,
+    membership_fee real DEFAULT 0,
+    membership_validity date DEFAULT (now() + '10 days'::interval),
+    create_time timestamp with time zone DEFAULT now() NOT NULL,
+    modify_time timestamp with time zone DEFAULT now() NOT NULL
+);
+
+-- Trigger to update modify_time on changes to vendor_mappings
+CREATE TRIGGER handle_updated_at BEFORE UPDATE ON public.vendor_mappings
+  FOR EACH ROW EXECUTE PROCEDURE public.update_modify_time();
+
+-- Table for tracking vendor payments
+CREATE TABLE public.vendor_payment (
+    id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+    vendor_id bigint NOT NULL REFERENCES public.vendor_mappings(id) ON DELETE CASCADE,
+    payment real NOT NULL,
+    payment_date date NOT NULL,
+    payment_duration interval NOT NULL,
+    create_time timestamp with time zone DEFAULT now() NOT NULL,
+    modify_time timestamp with time zone DEFAULT now() NOT NULL
+);
+
+-- Trigger to update modify_time on changes to vendor_payment
+CREATE TRIGGER handle_updated_at BEFORE UPDATE ON public.vendor_payment
+  FOR EACH ROW EXECUTE PROCEDURE public.update_modify_time();
+
+
+-- #####################################################
+-- ### SCHEMA FOR EACH VENDOR-SPECIFIC PROJECT ###
+-- #####################################################
+
+-- Table for vendor brand profiles
+CREATE TABLE public.brand (
+  id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  auth_user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  logo_url text,
+  cuisine text,
+  address text,
+  city text,
+  description text,
+  payment_link text,
+  whatsapp text,
+  contact text,
+  location_link text,
+  review_link text,
+  instagram text,
+  facebook text,
+  youtube text,
+  custom text,
+  full_menu_pic text,
+  create_time timestamp with time zone DEFAULT now() NOT NULL,
+  modify_time timestamp with time zone DEFAULT now() NOT NULL
+);
+
+-- Trigger to update modify_time on changes to brand
+CREATE TRIGGER handle_updated_at BEFORE UPDATE ON public.brand
+  FOR EACH ROW EXECUTE PROCEDURE public.update_modify_time();
+
+-- Table for individual menu items (dishes)
+CREATE TABLE public.dishes (
+  id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  brand_id bigint NOT NULL REFERENCES public.brand(id) ON DELETE CASCADE,
+  category text NOT NULL,
+  name text NOT NULL,
+  image text,
+  reel text,
+  description text,
+  price real,
+  instock instock_status DEFAULT 'yes',
+  veg dietary_info,
+  tag text,
+  create_time timestamp with time zone DEFAULT now() NOT NULL,
+  modify_time timestamp with time zone DEFAULT now() NOT NULL
+);
+
+-- Trigger to update modify_time on changes to dishes
+CREATE TRIGGER handle_updated_at BEFORE UPDATE ON public.dishes
+  FOR EACH ROW EXECUTE PROCEDURE public.update_modify_time();
+
+-- Table for daily status updates from vendors
+CREATE TABLE public.status_item (
+  id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  brand_id bigint NOT NULL REFERENCES public.brand(id) ON DELETE CASCADE,
+  type status_type NOT NULL,
+  content text NOT NULL,
+  imagekit_file_id text,
+  create_time timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+-- ##################################################
+-- ### ROW LEVEL SECURITY (RLS) POLICIES ###
+-- ##################################################
+
+-- RLS for public.vendor_mappings (Primary DB)
+ALTER TABLE public.vendor_mappings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Vendors can view their own mappings."
+ON public.vendor_mappings FOR SELECT
+USING (auth.uid() = auth_user_id);
+CREATE POLICY "Vendors can update their own mappings."
+ON public.vendor_mappings FOR UPDATE
+USING (auth.uid() = auth_user_id);
+CREATE POLICY "Admins can manage all mappings."
+ON public.vendor_mappings FOR ALL
+USING (true); -- Placeholder for admin role check, assumes full admin access for now
+
+-- RLS for public.vendor_payment (Primary DB)
+ALTER TABLE public.vendor_payment ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Admins can manage payments."
+ON public.vendor_payment FOR ALL
+USING (true); -- Placeholder for admin role check, assumes full admin access for now
+
+
+-- RLS for public.brand (Vendor DB)
+ALTER TABLE public.brand ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Vendors can manage their own brand"
+ON public.brand FOR ALL
+USING (auth.uid() = auth_user_id);
+
+-- RLS for public.dishes (Vendor DB)
+ALTER TABLE public.dishes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Vendors can manage their own dishes"
+ON public.dishes FOR ALL
+USING (
+  (EXISTS ( SELECT 1
+   FROM public.brand
+  WHERE ((public.brand.id = dishes.brand_id) AND (public.brand.auth_user_id = auth.uid()))))
+);
+
+-- RLS for public.status_item (Vendor DB)
+ALTER TABLE public.status_item ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Vendors can manage their own status items"
+ON public.status_item FOR ALL
+USING (
+  (EXISTS ( SELECT 1
+   FROM public.brand
+  WHERE ((public.brand.id = status_item.brand_id) AND (public.brand.auth_user_id = auth.uid()))))
+);
+```
+
+### Section 10 of 18: Frontend Implementation
+
+- **Component Organization:**
+  ```plaintext
+  /src/
+  ├── app/
+  │   ├── (auth)/
+  │   │   └── login/
+  │   │       └── page.tsx
+  │   └── (dashboard)/
+  │       ├── vendor/
+  │       │   └── dashboard/
+  │       │       ├── layout.tsx
+  │       │       └── page.tsx
+  │       └── layout.tsx
+  ├── components/
+  │   ├── features/
+  │   │   ├── dashboard/
+  │   │   └── auth/
+  │   ├── shared/
+  │   └── ui/
+  └── ...
+  ```
+- **Component Template:** We will continue to use the `shadcn/ui` component structure, using `React.forwardRef` and `cn` for class name merging.
+
+- **Global State:** Zustand will be used for managing global UI state and the authenticated user session.
+  - `use-ui-store.ts`: For managing UI state like modals, notifications, etc.
+  - `use-auth-store.ts`: For storing the user session and authentication status.
+- **Form State:** React Hook Form will be used for managing all form state within the dashboard.
+- **Server State:** We will use Supabase's client library for managing server state, including caching and revalidation of data fetched from the database.
+
+- **`/login`**: Public route for the Magic Link login form.
+- **`/[vendor-slug]/dashboard`**: A protected route that will redirect to `/login` if the user is not authenticated. This will be the main entry point for the vendor dashboard.
+- **Protected Route Pattern:** We will implement a higher-order component (HOC) or a layout component that checks for an active user session. If no session exists, it will redirect the user to the `/login` page.
+
+- **API Client:** We will use the official `@supabase/supabase-js` client library to interact with the Supabase backend.
+- **Service Example (`src/services/dishes.ts`):**
+
+  ```typescript
+  import { supabase } from '@/lib/supabase';
+  import { Dish } from '@/lib/types';
+
+  export async function getDishes(): Promise<Dish[]> {
+    const { data, error } = await supabase.from('dishes').select('*');
+    if (error) throw error;
+    return data;
+  }
+
+  export async function updateDish(
+    id: number,
+    updates: Partial<Dish>,
+  ): Promise<Dish> {
+    const { data, error } = await supabase
+      .from('dishes')
+      .update(updates)
+      .eq('id', id)
+      .select(); // Return the updated row
+
+    if (error) throw error;
+    if (!data || data.length === 0)
+      throw new Error('Dish not found or could not be updated.');
+
+    return data[0];
+  }
+  ```
+
+---
+
+### Section 11 of 18: Service Architecture
+
+- **Serverless Functions:** If any custom server-side logic is required (e.g., for integrating with a third-party service that requires a secret key), we will use **Supabase Edge Functions**. These are Deno-based TypeScript functions.
+  - **Function Organization:**
+    ```plaintext
+    /supabase/
+    └── functions/
+        ├── some-function/
+        │   └── index.ts
+        └── ...
+    ```
+
+#### Database Architecture
+
+- **Schema:** The database schema is defined in Section 9. We will use the Supabase UI and SQL scripts to manage the schema.
+- **Data Access:** All data access from the frontend will be through the auto-generated PostgREST API. We will not be writing custom data access layers in the backend.
+
+#### Authentication and Authorization
+
+- **Authentication:** We will use Supabase's built-in Magic Link (passwordless) authentication.
+- **Authorization:** Authorization will be enforced using Postgres **Row Level Security (RLS)** policies. This is the cornerstone of our security model.
+  - **RLS Policy Example (for `dishes` table):**
+
+    ```sql
+    -- 1. Enable RLS on the table
+    ALTER TABLE public.dishes ENABLE ROW LEVEL SECURITY;
+
+    -- 2. Allow vendors to see only their own dishes
+    CREATE POLICY "Vendors can view their own dishes"
+    ON public.dishes FOR SELECT
+    USING (auth.uid() = vendor_id);
+
+    -- 3. Allow vendors to insert dishes for themselves
+    CREATE POLICY "Vendors can insert their own dishes"
+    ON public.dishes FOR INSERT
+    WITH CHECK (auth.uid() = vendor_id);
+
+    -- 4. Allow vendors to update their own dishes
+    CREATE POLICY "Vendors can update their own dishes"
+    ON public.dishes FOR UPDATE
+    USING (auth.uid() = vendor_id);
+
+    -- 5. Allow vendors to delete their own dishes
+    CREATE POLICY "Vendors can delete their own dishes"
+    ON public.dishes FOR DELETE
+    USING (auth.uid() = vendor_id);
+    ```
+
+---
+
+### Section 12 of 18: Unified Project Structure
+
+This is the target project structure for our monorepo.
+
+```plaintext
+/
+├── docs/
+│   ├── architecture.md
+│   ├── prd.md
+│   └── ...
+├── src/
+│   ├── app/
+│   │   ├── (auth)/
+│   │   │   └── login/
+│   │   ├── (dashboard)/
+│   │   │   └── vendor/
+│   │   │       └── dashboard/
+│   │   └── [vendor_slug]/
+│   │       └── page.tsx      # <-- Public, server-rendered vendor page
+│   ├── components/
+│   ├── lib/
+│   ├── services/
+│   └── store/
+├── supabase/
+│   ├── migrations/
+│   │   └── 0001_initial_schema.sql
+│   └── functions/
+│       └── ...
+├── wiki/                 # Training materials and team onboarding docs
+├── package.json
+├── pnpm-lock.yaml
+└── ...
+```
+
+---
+
+### Section 13 of 18: Public-Facing Architecture (SEO)
+
+This section details the architecture for the public-facing vendor brand pages (e.g., `/the-burger-den`), which are critical for search engine discoverability while adhering to our "Free Tier Maximization" principle.
+
+#### Rendering Strategy: Static Site Generation (SSG) with Incremental Static Regeneration (ISR)
+
+To ensure vendor pages are fast, SEO-friendly, and cost-effective, we will use **SSG with ISR**.
+
+- **Rationale:** Pure Server-Side Rendering (SSR) executes on every request, risking high costs that could exceed Vercel's free tier limits. ISR provides the perfect balance: pages are pre-built as static HTML for maximum performance and SEO, and then automatically re-generated in the background at a defined interval (e.g., every 5 minutes). This dramatically reduces function invocations, keeping us within the free tier, while ensuring data remains reasonably fresh.
+
+#### ISR Data Flow
+
+The following diagram illustrates the data flow for a public vendor page request.
+
+```mermaid
+sequenceDiagram
+    participant Client as User/Crawler
+    participant VercelEdge as Vercel Edge (CDN)
+    participant VercelFunction as Vercel Function
+
+    Client->>VercelEdge: GET /{vendor_slug}
+
+    alt Initial Request / Cache Miss
+        VercelEdge->>VercelFunction: Trigger Page Generation
+        VercelFunction->>VercelFunction: Executes getStaticProps()
+        %% Data fetching logic within getStaticProps
+        VercelFunction-->>VercelEdge: Return HTML & JSON
+        VercelEdge-->>Client: Serve generated page
+    end
+
+    alt Subsequent Request (Cache Hit)
+        VercelEdge-->>Client: Serve static page from CDN
+    end
+
+    alt Subsequent Request (Stale, after revalidate period)
+        VercelEdge-->>Client: Serve STALE static page from CDN
+        VercelEdge->>VercelFunction: (In Background) Trigger Re-generation
+        VercelFunction->>VercelFunction: Executes getStaticProps()
+        VercelFunction-->>VercelEdge: Update cache with new page
+    end
+```
+
+#### Implementation Details
+
+- **Data Fetching:** Data for a vendor page will be fetched directly within the `page.tsx` Server Component. We will use `fetch` requests to our own API routes (which in turn fetch from Supabase/GSheets) or directly use the Supabase client on the server.
+- **Revalidation:** To achieve ISR, the primary data fetch will use the `next: { revalidate: 300 }` option. This instructs Next.js to cache the page for 300 seconds (5 minutes), after which a new request will trigger a background regeneration.
+  ```typescript
+  // Example within a data-fetching service
+  fetch('https://.../data', { next: { revalidate: 300 } });
+  ```
+- **Static Generation:** To pre-build pages for known vendors at build time, we will export a `generateStaticParams` function from `src/app/[vendor_slug]/page.tsx`. This function will return a list of all `vendor_slug`s to be generated.
+
+#### On-Page SEO Strategy
+
+To ensure our vendor pages rank well for specific search queries (e.g., "Eggsperiment" or "dishes of Eggsperiment"), we will implement a dynamic metadata strategy.
+
+- **`generateMetadata` Function:** In `src/app/[vendor_slug]/page.tsx`, we will export an async function called `generateMetadata`. This server-side function will fetch the specific vendor's brand and dish data.
+- **Dynamic Title:** The function will generate a unique, descriptive `<title>` tag for each vendor.
+  - _Example:_ `<title>Eggsperiment Menu | Delicious Dishes & Offers | YumYum</title>`
+- **Dynamic Meta Description:** The function will generate a compelling `<meta name="description">` tag that includes the vendor's name and some of their popular dishes, encouraging clicks from search results.
+  - _Example:_ `<meta name="description" content="Explore the official menu of Eggsperiment on YumYum, featuring our famous Spicy Paneer Pizza and Cheesy Garlic Bread. Order online now!">`
+
+This approach ensures that every vendor page sends strong, specific signals to search engines, directly addressing the goal of making vendors highly discoverable on the internet.
+
+---
+
+### Section 14 of 18: Deployment Architecture
+
+This section outlines the deployment strategy for the YumYum Premium Tier application.
+
+#### Deployment Strategy
+
+- **Platform:** The frontend application is hosted and deployed on **Vercel**. The backend services (database, auth, functions) are managed by **Supabase**.
+- **Deployment Method:** We use a **Continuous Deployment** model integrated with our Git repository.
+  - **Production:** Every push or merge to the `main` branch automatically triggers a build and deployment to the production environment.
+  - **Previews:** A unique preview deployment is automatically generated for every pull request, allowing for review and testing before merging.
+
+#### CI/CD Pipeline
+
+- **Provider:** The CI/CD pipeline is managed entirely by **Vercel**.
+- **Build Command:** `pnpm build`
+- **Output Directory:** `.next`
+- **Framework Preset:** Next.js
+
+#### Database Migrations
+
+- **Tooling:** Supabase database schema changes will be managed using the **Supabase CLI**.
+- **Workflow:**
+  1.  Developers will generate new migration files locally using the CLI.
+  2.  These migration files will be committed to the repository in the `/supabase/migrations` directory.
+  3.  When deploying changes to the Supabase backend (e.g., staging or production), these migrations will be applied manually using the Supabase CLI to ensure controlled updates.
+
+## 14.1 Environment Variable Management
+
+- **Purpose:** To securely manage configuration settings and sensitive credentials across different environments (local, development, production).
+- **Local Development:** Environment variables are managed in a `.env.local` file, which is based on the `.env.local.example` template. This file is excluded from version control.
+- **Production/Deployment:** Variables are securely configured in the hosting platform (e.g., Vercel) and GitHub Actions secrets.
+- **Public vs. Private:**
+  - **Public Variables:** Prefixed with `NEXT_PUBLIC_` (e.g., `NEXT_PUBLIC_SUPABASE_ACCT_1_URL`). These are safe to expose to the client-side application.
+  - **Private Variables:** Not prefixed with `NEXT_PUBLIC_` (e.g., `SUPABASE_SERVICE_ROLE_KEY`, `GA4_BIGQUERY_PROJECT_ID`). These must _never_ be exposed to the client-side and are used only in server-side code or build processes.
+- **Consistency:** The `.env.local.example` file serves as the single source of truth for all required environment variables, detailing their purpose and whether they are public or private.
+
+---
+
+### Section 15 of 18: Security and Performance
+
+This section covers the key strategies for ensuring the application is secure and performant.
+
+#### Security Requirements
+
+Our security model is based on a defense-in-depth approach, leveraging the capabilities of our chosen platforms.
+
+- **Authentication:** All vendor authentication is handled by **Supabase Auth**, using passwordless Magic Links. This outsources the complexity of password management and reduces the risk of credential theft.
+- **Authorization:** The cornerstone of our data security is **Postgres Row-Level Security (RLS)**. RLS policies, defined in Section 11, ensure that a vendor can _only_ access and modify their own data. These policies are enforced at the database level, providing a robust barrier against unauthorized data access.
+- **API Security:** By using the official Supabase client library, we ensure that JWTs are managed securely and automatically. All API access is governed by the RLS policies.
+- **Secret Management:** All sensitive information, such as API keys and database URLs, are stored as environment variables in Vercel and are not exposed to the client-side application.
+- **Infrastructure Security:** We rely on Vercel and Supabase to manage infrastructure-level security, including DDoS protection, firewalling, and physical security.
+
+#### Performance Optimization
+
+- **Public Pages (SEO):** The public-facing vendor pages (`/[vendor_slug]`) use **Static Site Generation (SSG) with Incremental Static Regeneration (ISR)**. This provides extremely fast static pages from the CDN that are perfect for SEO, while ensuring data is kept fresh automatically in the background.
+- **Authenticated Dashboard (CSR):** The vendor dashboard is a **Client-Side Rendered (CSR)** application. This provides a fast, app-like experience after the initial load, as navigation between sections does not require full page reloads.
+- **Global CDN:** All static assets and server-rendered pages are cached and served from **Vercel's Global Edge Network**, ensuring low latency for users worldwide.
+- **Media Optimization:** All images and media assets are served via **ImageKit**, which provides automatic optimization, format selection (e.g., WebP), and CDN delivery.
+- **Client-Side Caching:** The application will leverage browser caching and client-side state management (Zustand) to minimize redundant data fetching during a user session.
+
+---
+
+### Section 16 of 18: Testing Strategy
+
+Our testing strategy follows the "Testing Pyramid" model to ensure a high degree of confidence in our application's stability and correctness.
+
+- **Tools:**
+  - **Unit & Integration Testing:** Jest & React Testing Library
+  - **End-to-End Testing:** Playwright
+
+#### Unit Tests
+
+- **Scope:** Individual components in isolation, utility functions, and Zustand stores.
+- **Goal:** To verify that the smallest units of our application work as expected. For components, this means testing that they render correctly given specific props. For functions, it means testing their outputs given various inputs.
+- **Location:** `__tests__` directories co-located with the source files.
+
+#### Integration Tests
+
+- **Scope:** The interaction between multiple components that form a single feature. For example, testing the `DishesManagement` feature by simulating a user adding a new dish through the form and verifying that it appears in the data table.
+- **Goal:** To ensure that different parts of a feature are wired together correctly and that data flows between them as expected.
+- **Location:** `__tests__/components/features`
+
+#### End-to-End (E2E) Tests
+
+- **Scope:** Critical user journeys that span multiple pages and features of the application.
+- **Goal:** To simulate a real user's workflow from start to finish and catch issues in the integrated system that unit or integration tests might miss.
+- **Example Flows:**
+  1.  **Vendor Login & CRUD:** A vendor successfully logs in via Magic Link, navigates to the dashboard, creates a new dish, updates its price, and then deletes it.
+  2.  **Public Page Load:** A public user successfully loads a vendor's page, and the menu items are rendered correctly from the backend.
+
+---
+
+### Section 17 of 18: Coding Standards
+
+To ensure a high-quality and consistent codebase, all development must adhere to the following standards.
+
+- **Formatting:** All code will be automatically formatted using **Prettier** on save and before commits. This is non-negotiable and ensures a uniform style across the entire project.
+
+- **Linting:** We use **ESLint** to statically analyze the code and find problems. ESLint rules are defined in `eslint.config.mjs` and must be followed.
+
+- **Naming Conventions:**
+  - **Components:** `PascalCase` (e.g., `DishCard`, `VendorDashboard`).
+  - **Files:** `kebab-case` (e.g., `use-debounce.ts`, `gsheets.ts`).
+  - **Functions & Variables:** `camelCase` (e.g., `getDishes`, `vendorId`).
+  - **Types & Interfaces:** `PascalCase` (e.g., `VendorMapping`, `Dish`).
+
+- **Component Structure:** All new components should follow the `shadcn/ui` pattern, using `React.forwardRef` and the `cn` utility for merging classes. This ensures consistency and composability.
+
+- **Data Fetching:** All interaction with external or backend services **must** be abstracted into the `/src/services` layer. Components should not contain direct data fetching logic (e.g., `fetch` calls or direct Supabase client calls). They should call service functions instead.
+
+- **Type Safety:** The use of `any` is strictly discouraged. Always define specific types or interfaces for data structures.
+
+---
+
+### Section 18 of 18: Error Handling & Monitoring
+
+This section describes our approach to handling errors and monitoring the application in production.
+
+#### Error Handling
+
+- **UI Layer:**
+  - **User Feedback:** When an operation fails (e.g., saving a form), the user will be presented with a non-intrusive toast notification or an inline error message explaining the issue.
+  - **State Preservation:** Forms will preserve user input upon a submission failure, preventing data loss and frustration.
+  - **Error Boundaries:** React Error Boundaries will be used to catch rendering errors in component sub-trees, preventing a full application crash and displaying a fallback UI.
+
+- **Service & API Layer:**
+  - Service functions in `/src/services` are responsible for catching errors from external APIs (e.g., Supabase, ImageKit).
+  - Caught errors will be re-thrown as standardized application errors, which the UI layer can then interpret to display the appropriate user message.
+
+#### Monitoring
+
+Our monitoring strategy is focused on three key areas:
+
+1.  **User Behavior Analytics:**
+    - **Tool:** Google Analytics 4 (GA4).
+    - **Purpose:** To understand how users are interacting with the application, track conversion funnels, and measure feature adoption.
+
+2.  **Application Performance:**
+    - **Tool:** Vercel Analytics.
+    - **Purpose:** To monitor Core Web Vitals (LCP, FID, CLS) and overall application performance from the perspective of real users.
+
+3.  **Critical Failure Alerting:**
+    - **Tool:** Lark Webhook.
+    - **Purpose:** To provide immediate, real-time alerts to the development team when a critical backend operation fails. This is reserved for severe issues that require immediate attention, such as a failure to connect to the Supabase database or a critical authentication error.
 
 ---
 
@@ -838,17 +1403,3 @@ The chosen starter template and architectural patterns provide a production-read
 **Next Phase:** Begin implementation using the architectural decisions and patterns documented herein.
 
 **Document Maintenance:** Update this architecture when major technical decisions are made during implementation.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
