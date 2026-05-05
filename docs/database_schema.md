@@ -1,131 +1,61 @@
-## Database Schema (Canonical)
+# YumYum Database Schema (PostgreSQL via SQLModel)
 
-### `vendors`
-Stores vendor information, linked to `auth.users`.
-```sql
-create table vendors (
-  id uuid primary key references auth.users(id),
-  slug text unique not null,
-  name text not null,
-  category text not null,
-  whatsapp_number text not null,
-  latitude double precision,
-  longitude double precision,
-  is_active boolean default true,
-  created_at timestamptz default now()
-);
-```
+The system uses a relational PostgreSQL database to manage multi-tenant vendor and menu data.
 
-### `vendor_social_accounts`
-Stores social media links for vendors.
-```sql
-create type social_platform as enum ('instagram', 'facebook', 'whatsapp', 'youtube', 'twitter', 'website');
-create table vendor_social_accounts (
-  id bigint generated always as identity primary key,
-  vendor_id uuid not null references vendors(id) on delete cascade,
-  platform social_platform not null,
-  handle text not null,
-  url text not null,
-  is_primary boolean default false,
-  created_at timestamptz default now(),
-  unique (vendor_id, platform, handle)
-);
-```
+## 1. Core Tables
 
-### `vendor_updates`
-Stores daily attention slots (specials, announcements). Max 3 active updates per vendor.
-```sql
-create table vendor_updates (
-  id bigint generated always as identity primary key,
-  vendor_id uuid not null references vendors(id) on delete cascade,
-  title text not null,
-  description text,
-  media_url text,
-  starts_at timestamptz default now(),
-  expires_at timestamptz not null,
-  created_at timestamptz default now()
-);
-```
+### `vendor`
+Identity and authentication record.
+- `id`: UUID (Primary Key)
+- `email`: Text (Unique, Index)
+- `is_active`: Boolean (Default: True)
+- `created_at`: Timestamp with Timezone
 
-### `update_interactions`
-Tracks bounded multi-tap interest on updates (max 5 taps per session per update).
-```sql
-create table update_interactions (
-  id bigint generated always as identity primary key,
-  update_id bigint not null references vendor_updates(id) on delete cascade,
-  session_id text not null,
-  tap_count int default 1,
-  last_tapped_at timestamptz default now(),
-  unique (update_id, session_id)
-);
-```
+### `brand`
+The public profile for a vendor.
+- `id`: Integer (Primary Key)
+- `vendor_id`: UUID (Foreign Key -> `vendor.id`)
+- `slug`: Text (Unique, Index)
+- `name`: Text
+- `logo_url`: Text
+- `cuisine`: Text
+- `whatsapp_number`: Text
+- `payment_link`: Text
+- `created_at`: Timestamp with Timezone
 
 ### `dishes`
-Stores individual dish details.
-```sql
-create table dishes (
-  id bigint generated always as identity primary key,
-  vendor_id uuid not null references vendors(id) on delete cascade,
-  category text not null,
-  name text not null,
-  description text,
-  price numeric(10,2) not null,
-  is_available boolean default true,
-  image_url text,
-  created_at timestamptz default now()
-);
-```
+Menu items categorized and priced.
+- `id`: Integer (Primary Key)
+- `brand_id`: Integer (Foreign Key -> `brand.id`)
+- `category`: Text
+- `name`: Text
+- `price`: Float
+- `image_url`: Text
+- `video_url`: Text
+- `is_available`: Boolean (Default: True)
+- `is_veg`: Boolean (Default: True)
+- `tag`: Text (Optional: e.g., 'Best Seller')
 
-### `menu_events` (Analytics – Single Event Stream)
-The core behavioral backbone of YumYum. All metrics and dashboards derive from this table.
+### `status_item`
+Short-term promotional updates.
+- `id`: Integer (Primary Key)
+- `brand_id`: Integer (Foreign Key -> `brand.id`)
+- `type`: Enum ('image', 'video', 'text')
+- `content`: Text
+- `is_active`: Boolean (Default: True)
 
-**Event Type Definition:**
-```sql
-create type menu_event_type as enum (
-  'menu_view',
-  'dish_view',
-  'add_to_cart',
-  'order_click',
-  'update_view',
-  'update_click',
-  'update_interest',
-  'feedback_submit'
-);
-```
+## 2. Analytics Tables
 
-**Table Definition:**
-```sql
-create table menu_events (
-  id bigint generated always as identity primary key,
-  vendor_id uuid not null,
-  dish_id bigint null,
-  update_id bigint null,
-  event menu_event_type not null,
-  created_at timestamptz default now()
-);
-```
+### `menu_event`
+Event stream for behavioral tracking.
+- `id`: Integer (Primary Key)
+- `event_type`: Text ('menu_view', 'dish_view', 'add_to_cart', 'order_click')
+- `vendor_id`: UUID
+- `dish_id`: Integer (Nullable)
+- `update_id`: Integer (Nullable)
+- `created_at`: Timestamp with Timezone
 
-**Context Invariant:**
-At most one of `dish_id` or `update_id` may be non-null. They must never be set together.
-```sql
-alter table menu_events
-add constraint one_context_only
-check (
-  (dish_id is null and update_id is not null)
-  or (dish_id is not null and update_id is null)
-  or (dish_id is null and update_id is null)
-);
-```
-
-**Event Context Matrix:**
-
-| Event | dish_id | update_id | Meaning |
-|---|---|---|---|
-| `menu_view` | null | null | Menu opened |
-| `dish_view` | set | null | Dish viewed |
-| `add_to_cart` | set | null | Dish added to cart |
-| `order_click` | null | null | WhatsApp order initiated |
-| `update_view` | null | set | Vendor update shown |
-| `update_click` | null | set | Vendor update opened |
-| `update_interest` | null | set | Interest tap |
-| `feedback_submit` | null | null | Feedback submitted |
+## 3. Data Isolation Strategy
+Multi-tenancy is enforced at the application layer:
+1.  **Public Queries:** Always filtered by `brand.slug`.
+2.  **Protected Queries:** Always filtered by `vendor_id` derived from the JWT session.

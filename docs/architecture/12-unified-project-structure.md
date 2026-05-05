@@ -5,33 +5,23 @@ This is the target project structure for our monorepo.
 ```plaintext
 /
 ├── docs/
-│   ├── architecture.md
-│   ├── prd.md
+│   ├── prd/                  # Product Requirement Documents
+│   ├── architecture/         # Architectural designs and ADRs
+│   ├── wiki/                 # Training materials and team onboarding docs
+│   ├── journal/              # Visual assets and research
+│   └── stories/              # Implementation history
+├── frontend/                 # React (Vite) + TanStack
+│   ├── src/
+│   ├── tests/
 │   └── ...
-├── src/
+├── backend/                  # FastAPI + PostgreSQL
 │   ├── app/
-│   │   ├── (auth)/
-│   │   │   └── login/
-│   │   ├── (dashboard)/
-│   │   │   ├── [vendor_slug]/
-│   │   │   │   ├── dashboard/
-│   │   │   │   └── upload/
-│   │   │   └── layout.tsx
-│   │   └── [vendor_slug]/
-│   │       └── page.tsx      # <-- Public, server-rendered vendor page
-│   ├── components/
-│   ├── lib/
-│   ├── services/
-│   └── store/
-├── supabase/
-│   ├── migrations/
-│   │   └── 0001_initial_schema.sql
-│   └── functions/
-│       └── ...
-├── wiki/                 # Training materials and team onboarding docs
+│   ├── requirements.txt
+│   └── ...
+├── docker-compose.yml
 ├── package.json
 ├── pnpm-lock.yaml
-└── ...
+└── AGENTS.md
 ```
 
 ---
