@@ -5,11 +5,11 @@ from sqlmodel import select
 from backend.app.core.db import get_session
 from backend.app.core.security import (
     verify_password,
-    get_password_hash,
     create_access_token
 )
 from backend.app.models.models import Vendor
 from backend.app.schemas.auth import RegisterRequest, LoginRequest, TokenResponse
+from backend.app.services.vendor_management import VendorManagementService
 from jose import jwt
 from fastapi.security import OAuth2PasswordBearer
 from backend.app.core.config import settings
@@ -52,19 +52,11 @@ async def register(request: RegisterRequest, session: SessionDep):
     """
     Register a new vendor with mobile number and PIN (pattern).
     """
-    statement = select(Vendor).where(Vendor.mobile_number == request.mobile_number)
-    result = await session.execute(statement)
-    if result.scalars().first():
-        raise HTTPException(status_code=400, detail="Mobile number already registered")
-    
-    vendor = Vendor(
+    vendor = await VendorManagementService.create_vendor(
+        session=session,
         mobile_number=request.mobile_number,
-        pin_hash=get_password_hash(request.pin)
+        pin=request.pin
     )
-    session.add(vendor)
-    await session.commit()
-    await session.refresh(vendor)
-    
     access_token = create_access_token(subject=vendor.id)
     return TokenResponse(access_token=access_token)
 
@@ -85,3 +77,14 @@ async def login(request: LoginRequest, session: SessionDep):
     
     access_token = create_access_token(subject=vendor.id)
     return TokenResponse(access_token=access_token)
+
+@router.get("/me", response_model=dict)
+async def get_me(vendor: Annotated[Vendor, Depends(get_current_vendor)]):
+    """
+    Returns current user info.
+    """
+    return {
+        "id": vendor.id,
+        "mobile_number": vendor.mobile_number,
+        "is_superadmin": vendor.is_superadmin
+    }

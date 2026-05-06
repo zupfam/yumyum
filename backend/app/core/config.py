@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = ["*"]
 
+    # Observability
+    SENTRY_DSN: str = ""
+    ENVIRONMENT: str = "development"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

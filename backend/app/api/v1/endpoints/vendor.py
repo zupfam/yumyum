@@ -4,9 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 from backend.app.core.db import get_session
 from backend.app.api.v1.endpoints.auth import get_current_vendor
-from backend.app.models.models import Vendor, Brand, Dish, StatusItem
-from backend.app.schemas.schemas import BrandCreate, BrandRead, DishCreate, DishRead, StatusCreate, StatusRead, VendorStatusUpdate
+from backend.app.models.models import Vendor, Brand, Dish
+from backend.app.schemas.schemas import BrandCreate, BrandRead, DishCreate, DishRead, VendorStatusUpdate
 from backend.app.services.storage import upload_image
+from backend.app.services.vendor_management import VendorManagementService
 from datetime import datetime, timezone
 
 router = APIRouter(prefix="/vendor", tags=["vendor"])
@@ -50,17 +51,7 @@ async def update_vendor_status(
 
 @router.post("/me/brand", response_model=BrandRead)
 async def create_brand(brand_in: BrandCreate, vendor: CurrentVendor, session: SessionDep):
-    statement = select(Brand).where(Brand.vendor_id == vendor.id)
-    result = await session.execute(statement)
-    existing_brand = result.scalars().first()
-    if existing_brand:
-        raise HTTPException(status_code=400, detail="Brand already exists")
-    
-    brand = Brand(**brand_in.model_dump(), vendor_id=vendor.id)
-    session.add(brand)
-    await session.commit()
-    await session.refresh(brand)
-    return brand
+    return await VendorManagementService.create_brand(session, vendor.id, brand_in)
 
 @router.get("/me/dishes", response_model=List[DishRead])
 async def get_my_dishes(vendor: CurrentVendor, session: SessionDep):
@@ -82,11 +73,7 @@ async def add_dish(dish_in: DishCreate, vendor: CurrentVendor, session: SessionD
     if not brand:
         raise HTTPException(status_code=400, detail="Create brand first")
     
-    dish = Dish(**dish_in.model_dump(), brand_id=brand.id)
-    session.add(dish)
-    await session.commit()
-    await session.refresh(dish)
-    return dish
+    return await VendorManagementService.add_dish(session, brand.id, dish_in)
 
 @router.post("/upload/image")
 async def upload_vendor_image(

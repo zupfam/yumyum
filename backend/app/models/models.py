@@ -6,6 +6,7 @@ from uuid import UUID, uuid4
 class VendorBase(SQLModel):
     mobile_number: str = Field(unique=True, index=True)
     is_active: bool = True
+    is_superadmin: bool = Field(default=False)
 
 class Vendor(VendorBase, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
